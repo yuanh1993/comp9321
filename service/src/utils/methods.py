@@ -1,4 +1,5 @@
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 
 def entropy(data):
     base = np.log(data.shape[0])
