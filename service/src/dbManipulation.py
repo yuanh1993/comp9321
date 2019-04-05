@@ -4,19 +4,19 @@ import DataEngineer
 def feature_map():
     return {
         0: 'index',
-        1: 'age real',
-        2: 'sex real',
-        3: 'pain_type real',
-        4: 'blood_pressure real',
-        5: 'cholestoral real',
-        6: 'blood_sugar real',
-        7: 'electrocardiographic real',
-        8: 'heart_rate real',
-        9: 'angina real',
-        10: 'oldpeak real',
-        11: 'ST_segment real',
-        12: 'vessels real',
-        13: 'thal real',
+        1: 'age',
+        2: 'sex',
+        3: 'pain_type',
+        4: 'blood_pressure',
+        5: 'cholestoral',
+        6: 'blood_sugar',
+        7: 'electrocardiographic',
+        8: 'heart_rate',
+        9: 'angina',
+        10: 'oldpeak',
+        11: 'ST_segment',
+        12: 'vessels',
+        13: 'thal',
         14: 'target integer'
     }
 
@@ -79,6 +79,28 @@ def loadRawData(db_name='heart_disease.db'):
 def write_db():
     create_db()
     loadRawData()
+
+def get_slicedData(data_type, db_name='heart_disease.db'):
+    features = feature_map()
+    feature = features[data_type]
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    c.execute("select * from rawData")
+    raw_data = c.fetchall()
+    sliced_data = [{'data_type': feature,
+                    'missing':[],
+                    'missing_sign':'?'}]
+    for i, row in enumerate(raw_data):
+        if row[feature] == '?':
+            sliced_data[0]["missing"].append(i)
+        sliced_data.append({
+            'age': row['age'],
+            'sex': row['sex'],
+            'value': row[feature],
+        })
+    conn.close()
+    return sliced_data
 
 if __name__ == '__main__':
     create_db()
