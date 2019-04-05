@@ -3,3 +3,4 @@ flask_restplus == 0.12.1
 pandas == 0.20.3
 sklearn
 numpy == 1.14.5
+progressbar == 2.5
