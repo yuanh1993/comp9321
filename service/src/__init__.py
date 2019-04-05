@@ -11,5 +11,7 @@ api = Api(app, version='0.1', title='Heart Disease',
 def swagger_UI():
     return apidoc.ui_for(api)
 
+
+
 if __name__ == '__main__':
     app.run()
