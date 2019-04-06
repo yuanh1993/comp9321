@@ -27,6 +27,23 @@ export class ShowgraphComponent implements OnInit {
   }
 
 
+
+
+
+  barchat(dataPoints: any, title: string, axisY:string,name:string) {
+    let chart = new CanvasJS.Chart(name, {
+      animationEnabled: true,
+      title: {
+        text: title
+      },
+      axisY: {
+        title: axisY
+      },
+      data: dataPoints
+    });
+    chart.render();
+  }
+
   pain_type_age() {
     let dataPoints = [];
     this.getdataservice.getdata(3).subscribe(
@@ -55,17 +72,7 @@ export class ShowgraphComponent implements OnInit {
         for (let d of data.data) {
           dataPoints[Math.floor(d.age / 10)].dataPoints[(Math.floor(d.value - 1))].y++;
         }
-        let chart = new CanvasJS.Chart("chartContainer_age", {
-          animationEnabled: true,
-          title: {
-            text: "Pain Type vs. Age"
-          },
-          axisY: {
-            title: "Population"
-          },
-          data: dataPoints
-        });
-        chart.render();
+        this.barchat(dataPoints, 'Pain Type vs. Age', 'Population', 'chartContainer_age');
       });
   }
 
@@ -102,17 +109,7 @@ export class ShowgraphComponent implements OnInit {
         for (let d of data.data) {
           dataPoints[Math.floor(d.sex)].dataPoints[(Math.floor(d.value - 1))].y++;
         }
-        let chart = new CanvasJS.Chart("chartContainer_sex", {
-          animationEnabled: true,
-          title: {
-            text: "Pain Type vs. Sex"
-          },
-          axisY: {
-            title: "Population"
-          },
-          data: dataPoints
-        });
-        chart.render();
+        this.barchat(dataPoints, 'Pain Type vs. Sex', 'Population','chartContainer_sex');
       });
   }
 
