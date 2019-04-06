@@ -22,10 +22,12 @@ export class ShowgraphComponent implements OnInit {
 }
 
   ngOnInit() {
+
+  }
+  pain_type() {
     this.pain_type_age();
     this.pain_type_sex();
   }
-
 
 
 

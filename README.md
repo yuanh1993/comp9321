@@ -9,3 +9,11 @@ Install back-end enviornment by run
 ```
 pip3 install -r requirements.txt
 ```
+```
+npm install
+```
+
+This is a bootstrap package for angular
+```
+npm install --save @ng-bootstrap/ng-bootstrap
+```
