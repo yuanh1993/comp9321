@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response, request
+from flask import Flask, Response, request,Blueprint
 from flask_restplus import Resource, Api, apidoc
 from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures, FeatureRankDB, readFeatureRank
 from json import loads, dumps
+from flask_cors import CORS,cross_origin
 
 db_name = 'heart_disease.db'
 total_feature = 14
 app = Flask(__name__)
-api = Api(app, version='1.0', title='Heart Disease',
+cors = CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:4200"}})
+blueprint = Blueprint('api', __name__, url_prefix='/api')
+
+api = Api(blueprint, version='1.0', title='Heart Disease',
           description='Data set clean and heart disease prediction',)
+app.register_blueprint(blueprint)
+
 
 @api.documentation
 def swagger_ui():
@@ -35,9 +41,7 @@ class getData(Resource):
         except:
             return Response(status=404, response="Data type label should in range 1-14 in integer.")
         context = get_slicedData(data_type)
-        return Response(status=200, response=dumps(context,
-                                                    sort_keys=False,
-                                                    indent=4))
+        return Response(status=200, response=dumps(context,sort_keys=False,indent=4))
 
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
