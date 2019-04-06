@@ -216,7 +216,7 @@ def FeatureRankDB(method, db_name = 'heart_disease.db'):
                    ''')
         conn.commit()
     context = RankFeatures(method)
-    exist = c.execute("select * from featureRank where method = %s", method).fetchone()
+    exist = c.execute("select * from featureRank where method = '%s'" % method).fetchone()
     data_update = [method]
     for key in context:
         data_update.append(key)
@@ -226,8 +226,10 @@ def FeatureRankDB(method, db_name = 'heart_disease.db'):
                   "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                   data_update)
     else:
+        data_updated = data_update[1:]
+        data_updated.append(method)
         c.execute("update featureRank set "
-                  "(rank_1 = ?, rank_1_score = ?,"
+                  "rank_1 = ?, rank_1_score = ?,"
                   "rank_2 = ?, rank_2_score = ?,"
                   "rank_3 = ?, rank_3_score = ?,"
                   "rank_4 = ?, rank_4_score = ?,"
@@ -239,8 +241,7 @@ def FeatureRankDB(method, db_name = 'heart_disease.db'):
                   "rank_10 = ?, rank_10_score = ?,"
                   "rank_11 = ?, rank_11_score = ?,"
                   "rank_12 = ?, rank_12_score = ?,"
-                  "rank_13 = ?, rank_13_score = ?)"
-                  "where method = ?",
-                  (data_update[1:] + data_update[0] ))
+                  "rank_13 = ?, rank_13_score = ?"
+                  " where method = ?", data_updated)
     conn.commit()
     conn.close()
