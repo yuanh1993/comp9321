@@ -169,16 +169,78 @@ def single_task(feature_points, i, method):
 def RankFeatures(method):
     feature_points = {}
     feature_points = Parallel(n_jobs=1)(delayed(single_task)(feature_points, i, method) for i in range(1, 14))[0]
-    # for i in range(1, 14):
-    #     X, y = get_spec_feature(i, fix_method = 'knn')
-    #     if i in discrete_data:
-    #         feature_points[i] = discrete_analysis(X, y, i)
-    #     else:
-    #         feature_points[i] = continous_analysis(X, y, i)
-    features = [x for x in range(1, 13)]
+    features = [x for x in range(1, 14)]
     features.sort(key=lambda x: feature_points[x], reverse=True)
     context = {}
     feature_m = feature_map()
     for feature in features:
         context[feature_m[feature]] = feature_points[feature]
     return context
+
+def FeatureRankDB(method, db_name = 'heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from featureRank")
+    except:
+        c.execute('''
+                       create table featureRank (
+                       method text primary key,
+                       rank_1 text,
+                       rank_1_score real,
+                       rank_2 text,
+                       rank_2_score real,
+                       rank_3 text,
+                       rank_3_score real,
+                       rank_4 text,
+                       rank_4_score real,
+                       rank_5 text,
+                       rank_5_score real,
+                       rank_6 text,
+                       rank_6_score real,
+                       rank_7 text,
+                       rank_7_score real,
+                       rank_8 text,
+                       rank_8_score real,
+                       rank_9 text,
+                       rank_9_score real,
+                       rank_10 text,
+                       rank_10_score real,
+                       rank_11 text,
+                       rank_11_score real,
+                       rank_12 text,
+                       rank_12_score real,
+                       rank_13 text,
+                       rank_13_score real                      
+                       )
+                   ''')
+        conn.commit()
+    context = RankFeatures(method)
+    exist = c.execute("select * from featureRank where method = %s", method).fetchone()
+    data_update = [method]
+    for key in context:
+        data_update.append(key)
+        data_update.append(context[key])
+    if exist == None:
+        c.execute("insert into featureRank values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  data_update)
+    else:
+        c.execute("update featureRank set "
+                  "(rank_1 = ?, rank_1_score = ?,"
+                  "rank_2 = ?, rank_2_score = ?,"
+                  "rank_3 = ?, rank_3_score = ?,"
+                  "rank_4 = ?, rank_4_score = ?,"
+                  "rank_5 = ?, rank_5_score = ?,"
+                  "rank_6 = ?, rank_6_score = ?,"
+                  "rank_7 = ?, rank_7_score = ?,"
+                  "rank_8 = ?, rank_8_score = ?,"
+                  "rank_9 = ?, rank_9_score = ?,"
+                  "rank_10 = ?, rank_10_score = ?,"
+                  "rank_11 = ?, rank_11_score = ?,"
+                  "rank_12 = ?, rank_12_score = ?,"
+                  "rank_13 = ?, rank_13_score = ?)"
+                  "where method = ?",
+                  (data_update[1:] + data_update[0] ))
+    conn.commit()
+    conn.close()
