@@ -17,7 +17,7 @@ const httpOptions = {
 
 })
 export class GetdataService {
-  baseurl="http://127.0.0.1:5000"
+  baseurl="http://127.0.0.1:5000/api"
   constructor(
   private http: HttpClient,
   ) {}
