@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flask_restplus import Resource, Api, apidoc
-from dbManipulation import write_db, feature_map, get_slicedData
+from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures, FeatureRankDB
 from json import loads, dumps
 
 db_name = 'heart_disease.db'
@@ -38,6 +38,42 @@ class getData(Resource):
         return Response(status=200, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/rankFeature', endpoint="rankFeature")
+@api.doc(params = {'method': 'method'})
+class rankFeature(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        context = RankFeatures(method)
+        return Response(status=200, response=dumps(context,
+                                                    sort_keys=False,
+                                                    indent=4))
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/rankFeature_toDB', endpoint="rankFeature_toDB")
+@api.doc(params = {'method': 'method'})
+class rankFeature_toDB(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        FeatureRankDB(method)
+        return Response(status=200, response="Feature to DB success!")
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,5 +1,26 @@
 import sqlite3, progressbar, sys
 import DataEngineer
+from utils import One_Hot_All, discrete_analysis, continous_analysis
+from joblib import Parallel, delayed
+
+discrete_data = [
+    2, 3, 6, 7, 9, 13, 14
+]
+
+continuous_data = [
+    1, 4, 5, 8, 10, 11, 12
+]
+
+interpreter = {
+    1: {}, 4: {}, 5: {}, 8: {}, 10: {}, 11: {}, 12:{},
+    2: {1: 'male', 2: 'female'},
+    3: {1: 'typical angin', 2: 'atypical angina', 3: 'non-anginal pain', 4: 'asymptomatic'},
+    6: {0: False, 1: True},
+    7: {0: 'normal', 1: 'having ST-T wave abnormality', 2: 'Estes'},
+    9: {0: False, 1: True},
+    13: {3: 'normal', 6: 'fixed defect', 7: 'reversable defect'},
+    14: {0: False, 1: True}
+}
 
 def feature_map():
     return {
@@ -17,7 +38,7 @@ def feature_map():
         11: 'ST_segment',
         12: 'vessels',
         13: 'thal',
-        14: 'target integer'
+        14: 'target'
     }
 
 def dict_factory(cursor, row):
@@ -88,7 +109,13 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     c = conn.cursor()
     c.execute("select * from rawData")
     raw_data = c.fetchall()
-    sliced_data = [{'data_type': feature,
+    if data_type in discrete_data:
+        d_t = 'discrete'
+    else:
+        d_t = 'continuous'
+    sliced_data = [{'data_name': feature,
+                    'data_type': d_t,
+                    'interpreter': interpreter[data_type],
                     'missing':[],
                     'missing_sign':'?'}]
     for i, row in enumerate(raw_data):
@@ -102,6 +129,119 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     conn.close()
     return sliced_data
 
-if __name__ == '__main__':
-    create_db()
-    loadRawData()
+def get_spec_feature(data_type, fix_method = 'drop', db_name='heart_disease.db'):
+    features = feature_map()
+    feature = features[data_type]
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    c.execute("select * from rawData")
+    raw_data = c.fetchall()
+    means = c.execute("select avg(age), avg(sex), avg(pain_type),"
+                      " avg(blood_pressure), avg(cholestoral), avg(blood_sugar),"
+                      " avg(electrocardiographic), avg(heart_rate), avg(angina), "
+                      "avg(vessels), avg(thal), avg(target) from rawData").fetchone()
+    if fix_method =='knn':
+        patch = One_Hot_All(raw_data, data_type, features, means)
+    X, y = [], []
+    index = 0
+    for data in raw_data:
+        if data[feature] == '?':
+            if fix_method == 'drop':
+                continue
+            else:
+                X.append(patch[index])
+                index += 1
+        else:
+            X.append(data[feature])
+        y.append(data['target'])
+    return X, y
+
+def single_task(feature_points, i, method):
+    X, y = get_spec_feature(i, fix_method=method)
+    if i in discrete_data:
+        feature_points[i] = discrete_analysis(X, y, i)
+    else:
+        feature_points[i] = continous_analysis(X, y, i)
+    return feature_points
+
+
+def RankFeatures(method):
+    feature_points = {}
+    feature_points = Parallel(n_jobs=1)(delayed(single_task)(feature_points, i, method) for i in range(1, 14))[0]
+    features = [x for x in range(1, 14)]
+    features.sort(key=lambda x: feature_points[x], reverse=True)
+    context = {}
+    feature_m = feature_map()
+    for feature in features:
+        context[feature_m[feature]] = feature_points[feature]
+    return context
+
+def FeatureRankDB(method, db_name = 'heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from featureRank")
+    except:
+        c.execute('''
+                       create table featureRank (
+                       method text primary key,
+                       rank_1 text,
+                       rank_1_score real,
+                       rank_2 text,
+                       rank_2_score real,
+                       rank_3 text,
+                       rank_3_score real,
+                       rank_4 text,
+                       rank_4_score real,
+                       rank_5 text,
+                       rank_5_score real,
+                       rank_6 text,
+                       rank_6_score real,
+                       rank_7 text,
+                       rank_7_score real,
+                       rank_8 text,
+                       rank_8_score real,
+                       rank_9 text,
+                       rank_9_score real,
+                       rank_10 text,
+                       rank_10_score real,
+                       rank_11 text,
+                       rank_11_score real,
+                       rank_12 text,
+                       rank_12_score real,
+                       rank_13 text,
+                       rank_13_score real                      
+                       )
+                   ''')
+        conn.commit()
+    context = RankFeatures(method)
+    exist = c.execute("select * from featureRank where method = '%s'" % method).fetchone()
+    data_update = [method]
+    for key in context:
+        data_update.append(key)
+        data_update.append(context[key])
+    if exist == None:
+        c.execute("insert into featureRank values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  data_update)
+    else:
+        data_updated = data_update[1:]
+        data_updated.append(method)
+        c.execute("update featureRank set "
+                  "rank_1 = ?, rank_1_score = ?,"
+                  "rank_2 = ?, rank_2_score = ?,"
+                  "rank_3 = ?, rank_3_score = ?,"
+                  "rank_4 = ?, rank_4_score = ?,"
+                  "rank_5 = ?, rank_5_score = ?,"
+                  "rank_6 = ?, rank_6_score = ?,"
+                  "rank_7 = ?, rank_7_score = ?,"
+                  "rank_8 = ?, rank_8_score = ?,"
+                  "rank_9 = ?, rank_9_score = ?,"
+                  "rank_10 = ?, rank_10_score = ?,"
+                  "rank_11 = ?, rank_11_score = ?,"
+                  "rank_12 = ?, rank_12_score = ?,"
+                  "rank_13 = ?, rank_13_score = ?"
+                  " where method = ?", data_updated)
+    conn.commit()
+    conn.close()
