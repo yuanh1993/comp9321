@@ -117,7 +117,8 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
                     'data_type': d_t,
                     'interpreter': interpreter[data_type],
                     'missing':[],
-                    'missing_sign':'?'}]
+                    'missing_sign':'?',
+                    'data_length':0}]
     for i, row in enumerate(raw_data):
         if row[feature] == '?':
             sliced_data[0]["missing"].append(i)
@@ -126,8 +127,13 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
             'sex': row['sex'],
             'value': row[feature],
         })
+        sliced_data[0]['data_length'] += 1
+    context = {
+        'Info': sliced_data[0],
+        'data': sliced_data[1:]
+    }
     conn.close()
-    return sliced_data
+    return context
 
 def get_spec_feature(data_type, fix_method = 'drop', db_name='heart_disease.db'):
     features = feature_map()

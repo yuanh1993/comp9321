@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response, request,Blueprint
+from flask import Flask, Response, request, Blueprint
 from flask_restplus import Resource, Api, apidoc
-from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures, FeatureRankDB, readFeatureRank
+from dbManipulation import (write_db, feature_map, get_slicedData,
+                            RankFeatures, FeatureRankDB, readFeatureRank)
 from json import loads, dumps
-from flask_cors import CORS,cross_origin
+from flask_cors import CORS
 
 db_name = 'heart_disease.db'
 total_feature = 14
