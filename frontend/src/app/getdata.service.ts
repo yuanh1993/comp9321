@@ -22,8 +22,6 @@ export class GetdataService {
   private http: HttpClient,
   ) {}
   getdata(id:number){
-    return this.http.get<any>(`${this.baseurl}/api/getData/${id}`);
+    return this.http.get<any>(`${this.baseurl}/getData/${id}`);
   }
-
-
 }
