@@ -4,3 +4,4 @@ pandas == 0.20.3
 sklearn
 numpy == 1.14.5
 progressbar == 2.5
+joblib == 0.13.2

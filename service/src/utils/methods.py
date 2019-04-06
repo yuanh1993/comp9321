@@ -13,13 +13,12 @@ def Logistic(data, target):
         n = -1
     data = data.reshape(m, n)
     clf = LogisticRegression(solver='liblinear')
-    try:
-        scores = cross_val_score(clf, data, target, cv=10)
+    scores = cross_val_score(clf, data, target, cv=10, n_jobs=-1)
     return np.mean(scores)
 
 def DecisionTree(data, target):
     clf = DecisionTreeClassifier(criterion="entropy")
-    scores = cross_val_score(clf, data, target, cv=10)
+    scores = cross_val_score(clf, data, target, cv=10, n_jobs=-1)
     return np.mean(scores)
 
 def KNNCleaner(data, target, test):

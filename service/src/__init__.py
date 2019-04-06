@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, Response
+from flask import Flask, Response, request
 from flask_restplus import Resource, Api, apidoc
 from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures
 from json import loads, dumps
@@ -42,9 +42,18 @@ class getData(Resource):
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/rankFeature', endpoint="rankFeature")
+@api.doc(params = {'method': 'method'})
 class rankFeature(Resource):
     def get(self):
-        context = RankFeatures()
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        context = RankFeatures(method)
         return Response(status=200, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))

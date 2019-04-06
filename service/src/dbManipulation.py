@@ -1,6 +1,26 @@
 import sqlite3, progressbar, sys
 import DataEngineer
 from utils import One_Hot_All, discrete_analysis, continous_analysis
+from joblib import Parallel, delayed
+
+discrete_data = [
+    2, 3, 6, 7, 9, 13, 14
+]
+
+continuous_data = [
+    1, 4, 5, 8, 10, 11, 12
+]
+
+interpreter = {
+    1: {}, 4: {}, 5: {}, 8: {}, 10: {}, 11: {}, 12:{},
+    2: {1: 'male', 2: 'female'},
+    3: {1: 'typical angin', 2: 'atypical angina', 3: 'non-anginal pain', 4: 'asymptomatic'},
+    6: {0: False, 1: True},
+    7: {0: 'normal', 1: 'having ST-T wave abnormality', 2: 'Estes'},
+    9: {0: False, 1: True},
+    13: {3: 'normal', 6: 'fixed defect', 7: 'reversable defect'},
+    14: {0: False, 1: True}
+}
 
 def feature_map():
     return {
@@ -89,7 +109,13 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     c = conn.cursor()
     c.execute("select * from rawData")
     raw_data = c.fetchall()
-    sliced_data = [{'data_type': feature,
+    if data_type in discrete_data:
+        d_t = 'discrete'
+    else:
+        d_t = 'continuous'
+    sliced_data = [{'data_name': feature,
+                    'data_type': d_t,
+                    'interpreter': interpreter[data_type],
                     'missing':[],
                     'missing_sign':'?'}]
     for i, row in enumerate(raw_data):
@@ -131,21 +157,26 @@ def get_spec_feature(data_type, fix_method = 'drop', db_name='heart_disease.db')
         y.append(data['target'])
     return X, y
 
-def RankFeatures():
-    discrete_data = [
-        2, 3, 6, 7, 9, 13, 14
-    ]
+def single_task(feature_points, i, method):
+    X, y = get_spec_feature(i, fix_method=method)
+    if i in discrete_data:
+        feature_points[i] = discrete_analysis(X, y, i)
+    else:
+        feature_points[i] = continous_analysis(X, y, i)
+    return feature_points
+
+
+def RankFeatures(method):
     feature_points = {}
-    for i in range(1, 14):
-        X, y = get_spec_feature(i, fix_method = 'drop')
-        if i in discrete_data:
-            feature_points[i] = discrete_analysis(X, y, i)
-        else:
-            feature_points[i] = continous_analysis(X, y, i)
+    feature_points = Parallel(n_jobs=1)(delayed(single_task)(feature_points, i, method) for i in range(1, 14))[0]
+    # for i in range(1, 14):
+    #     X, y = get_spec_feature(i, fix_method = 'knn')
+    #     if i in discrete_data:
+    #         feature_points[i] = discrete_analysis(X, y, i)
+    #     else:
+    #         feature_points[i] = continous_analysis(X, y, i)
     features = [x for x in range(1, 13)]
     features.sort(key=lambda x: feature_points[x], reverse=True)
-    print(features)
-    print(feature_points)
     context = {}
     feature_m = feature_map()
     for feature in features:
