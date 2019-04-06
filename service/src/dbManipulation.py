@@ -1,5 +1,6 @@
 import sqlite3, progressbar, sys
 import DataEngineer
+from utils import One_Hot_All, discrete_analysis, continous_analysis
 
 def feature_map():
     return {
@@ -17,7 +18,7 @@ def feature_map():
         11: 'ST_segment',
         12: 'vessels',
         13: 'thal',
-        14: 'target integer'
+        14: 'target'
     }
 
 def dict_factory(cursor, row):
@@ -102,6 +103,51 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     conn.close()
     return sliced_data
 
-if __name__ == '__main__':
-    create_db()
-    loadRawData()
+def get_spec_feature(data_type, fix_method = 'drop', db_name='heart_disease.db'):
+    features = feature_map()
+    feature = features[data_type]
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    c.execute("select * from rawData")
+    raw_data = c.fetchall()
+    means = c.execute("select avg(age), avg(sex), avg(pain_type),"
+                      " avg(blood_pressure), avg(cholestoral), avg(blood_sugar),"
+                      " avg(electrocardiographic), avg(heart_rate), avg(angina), "
+                      "avg(vessels), avg(thal), avg(target) from rawData").fetchone()
+    if fix_method =='knn':
+        patch = One_Hot_All(raw_data, data_type, features, means)
+    X, y = [], []
+    index = 0
+    for data in raw_data:
+        if data[feature] == '?':
+            if fix_method == 'drop':
+                continue
+            else:
+                X.append(patch[index])
+                index += 1
+        else:
+            X.append(data[feature])
+        y.append(data['target'])
+    return X, y
+
+def RankFeatures():
+    discrete_data = [
+        2, 3, 6, 7, 9, 13, 14
+    ]
+    feature_points = {}
+    for i in range(1, 14):
+        X, y = get_spec_feature(i, fix_method = 'drop')
+        if i in discrete_data:
+            feature_points[i] = discrete_analysis(X, y, i)
+        else:
+            feature_points[i] = continous_analysis(X, y, i)
+    features = [x for x in range(1, 13)]
+    features.sort(key=lambda x: feature_points[x], reverse=True)
+    print(features)
+    print(feature_points)
+    context = {}
+    feature_m = feature_map()
+    for feature in features:
+        context[feature_m[feature]] = feature_points[feature]
+    return context

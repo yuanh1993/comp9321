@@ -2,7 +2,7 @@
 
 from flask import Flask, Response
 from flask_restplus import Resource, Api, apidoc
-from dbManipulation import write_db, feature_map, get_slicedData
+from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures
 from json import loads, dumps
 
 db_name = 'heart_disease.db'
@@ -35,6 +35,16 @@ class getData(Resource):
         except:
             return Response(status=404, response="Data type label should in range 1-14 in integer.")
         context = get_slicedData(data_type)
+        return Response(status=200, response=dumps(context,
+                                                    sort_keys=False,
+                                                    indent=4))
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/rankFeature', endpoint="rankFeature")
+class rankFeature(Resource):
+    def get(self):
+        context = RankFeatures()
         return Response(status=200, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))
