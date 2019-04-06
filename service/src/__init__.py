@@ -10,7 +10,7 @@ from flask_cors import CORS
 db_name = 'heart_disease.db'
 total_feature = 14
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "http://127.0.0.1:4200"}})
+cors = CORS(app, resources={r"/api/*": {"origins": ["http://127.0.0.1:4200", "http://localhost:4200"]}})
 blueprint = Blueprint('api', __name__, url_prefix='/api')
 
 api = Api(blueprint, version='1.0', title='Heart Disease',
