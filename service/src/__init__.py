@@ -2,7 +2,7 @@
 
 from flask import Flask, Response, request
 from flask_restplus import Resource, Api, apidoc
-from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures, FeatureRankDB
+from dbManipulation import write_db, feature_map, get_slicedData, RankFeatures, FeatureRankDB, readFeatureRank
 from json import loads, dumps
 
 db_name = 'heart_disease.db'
@@ -53,7 +53,7 @@ class rankFeature(Resource):
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-        context = RankFeatures(method)
+        context = readFeatureRank(method)
         return Response(status=200, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))
@@ -72,8 +72,10 @@ class rankFeature_toDB(Resource):
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-        FeatureRankDB(method)
-        return Response(status=200, response="Feature to DB success!")
+        context = FeatureRankDB(method)
+        return Response(status=201, response=dumps(context,
+                                                    sort_keys=False,
+                                                    indent=4))
 
 if __name__ == '__main__':
     app.run(debug=True)

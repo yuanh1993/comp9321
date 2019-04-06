@@ -245,3 +245,32 @@ def FeatureRankDB(method, db_name = 'heart_disease.db'):
                   " where method = ?", data_updated)
     conn.commit()
     conn.close()
+    return context
+
+def readFeatureRank(method, db_name = 'heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from featureRank where method = '%s'" % method).fetchone()
+    except:
+        conn.close()
+        return FeatureRankDB(method)
+    result = c.fetchone()
+    if result == None:
+        conn.close()
+        return FeatureRankDB(method)
+    context = {}
+    i = 0
+    prev = ''
+    for key in result:
+        if i == 0:
+            i += 1
+        else:
+            if i % 2 == 1:
+                context[result[key]] = 0.0
+                prev = result[key]
+            else:
+                context[prev] = result[key]
+            i += 1
+    conn.close()
+    return context
