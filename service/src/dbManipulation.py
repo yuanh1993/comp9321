@@ -2,6 +2,7 @@ import sqlite3, progressbar, sys
 import DataEngineer
 from utils import One_Hot_All, discrete_analysis, continous_analysis
 from joblib import Parallel, delayed
+from collections import defaultdict
 
 discrete_data = [
     2, 3, 6, 7, 9, 13, 14
@@ -113,6 +114,13 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
         d_t = 'discrete'
     else:
         d_t = 'continuous'
+    age_10 = {
+        'min_val': 1000,
+        'max_val': 0,
+        'group_count': 0
+    }
+    age_bucket = {}
+    bucket_key_set = []
     sliced_data = [{'data_name': feature,
                     'data_type': d_t,
                     'interpreter': interpreter[data_type],
@@ -122,12 +130,36 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     for i, row in enumerate(raw_data):
         if row[feature] == '?':
             sliced_data[0]["missing"].append(i)
+        age_buck = int(row['age']//10) * 10
         sliced_data.append({
             'age': row['age'],
             'sex': row['sex'],
             'value': row[feature],
         })
+        if row[feature] not in bucket_key_set:
+            bucket_key_set.append(row[feature])
+        if age_buck > age_10['max_val']:
+            age_10['max_val'] = age_buck
+        if age_buck < age_10['min_val']:
+            age_10['min_val'] = age_buck
+        if age_buck in age_bucket:
+            if row[feature] in age_bucket[age_buck]:
+                age_bucket[age_buck][row[feature]] += 1
+            else:
+                age_bucket[age_buck][row[feature]] = 1
+        else:
+            age_bucket[age_buck] = {
+                row[feature]: 1
+            }
         sliced_data[0]['data_length'] += 1
+    age_10['group_count'] = len(age_bucket)
+    for each_age in age_bucket:
+        for i in bucket_key_set:
+            if i not in age_bucket[each_age]:
+                age_bucket[each_age][i] = 0
+        age_bucket[each_age] = dict(sorted(age_bucket[each_age].items()))
+    age_10['bucket_data'] = dict(sorted(age_bucket.items()))
+    sliced_data[0]['age_10'] = age_10
     context = {
         'Info': sliced_data[0],
         'data': sliced_data[1:]
