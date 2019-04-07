@@ -6,6 +6,7 @@ from dbManipulation import (write_db, feature_map, get_slicedData,
                             RankFeatures, FeatureRankDB, readFeatureRank)
 from json import loads, dumps
 from flask_cors import CORS
+from WashDog import sweep
 
 db_name = 'heart_disease.db'
 total_feature = 14
@@ -33,15 +34,21 @@ class writeDB(Resource):
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/getData/<data_type>', endpoint="getData")
+@api.doc(params = {'bucket_size': 'bucket_size'})
 class getData(Resource):
     def get(self, data_type):
+        try:
+            request.args = request.args.to_dict()
+            bucket_size = int(request.args['bucket_size'])
+        except:
+            bucket_size = 10
         try:
             data_type = int(data_type)
             if data_type not in range(3, total_feature):
                 return Response(status=404, response="Data type label should in range 3-" + str(total_feature - 1))
         except:
             return Response(status=404, response="Data type label should in range 1-14 in integer.")
-        context = get_slicedData(data_type)
+        context = get_slicedData(data_type, bucket_size=bucket_size)
         return Response(status=200, response=dumps(context,sort_keys=False,indent=4))
 
 @api.response(200, 'OK')
@@ -81,6 +88,25 @@ class rankFeature_toDB(Resource):
         return Response(status=201, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/saveCleanDataDB', endpoint="saveCleanDataDB")
+@api.doc(params = {'method': 'method'})
+class saveCleanDataDB(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        if method == 'drop':
+            sweep()
+            context = "Data cleaned with drop dirty data and saved to DB"
+        return Response(status=201, response=context)
 
 if __name__ == '__main__':
     app.run(debug=True)

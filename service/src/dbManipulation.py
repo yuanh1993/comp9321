@@ -97,11 +97,26 @@ def loadRawData(db_name='heart_disease.db'):
     print("Done: load data.")
     conn.close()
 
-def write_db():
-    create_db()
-    loadRawData()
+def read_rawData(db_name='heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    c.execute("select * from rawData")
+    raw_data = c.fetchall()
+    list_data = []
+    for data in raw_data:
+        list_line = []
+        for key in data:
+            if key == 'id':
+                continue
+            else:
+                list_line.append(data[key])
+        list_data.append(list_line)
+    conn.close()
+    return list_data
 
-def get_slicedData(data_type, db_name='heart_disease.db'):
+
+def get_slicedData(data_type, bucket_size = 10, db_name='heart_disease.db'):
     features = feature_map()
     feature = features[data_type]
     conn = sqlite3.connect(db_name)
@@ -113,7 +128,7 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
         d_t = 'discrete'
     else:
         d_t = 'continuous'
-    age_10 = {
+    data_bucket_age = {
         'min_val': 1000,
         'max_val': 0,
         'group_count': 0
@@ -129,7 +144,7 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
     for i, row in enumerate(raw_data):
         if row[feature] == '?':
             sliced_data[0]["missing"].append(i)
-        age_buck = int(row['age']//10) * 10
+        age_buck = int(row['age']//bucket_size) * bucket_size
         sliced_data.append({
             'age': row['age'],
             'sex': row['sex'],
@@ -137,10 +152,10 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
         })
         if row[feature] not in bucket_key_set:
             bucket_key_set.append(row[feature])
-        if age_buck > age_10['max_val']:
-            age_10['max_val'] = age_buck
-        if age_buck < age_10['min_val']:
-            age_10['min_val'] = age_buck
+        if age_buck > data_bucket_age['max_val']:
+            data_bucket_age['max_val'] = age_buck
+        if age_buck < data_bucket_age['min_val']:
+            data_bucket_age['min_val'] = age_buck
         if age_buck in age_bucket:
             if row[feature] in age_bucket[age_buck]:
                 age_bucket[age_buck][row[feature]] += 1
@@ -151,14 +166,14 @@ def get_slicedData(data_type, db_name='heart_disease.db'):
                 row[feature]: 1
             }
         sliced_data[0]['data_length'] += 1
-    age_10['group_count'] = len(age_bucket)
+    data_bucket_age['group_count'] = len(age_bucket)
     for each_age in age_bucket:
         for i in bucket_key_set:
             if i not in age_bucket[each_age]:
                 age_bucket[each_age][i] = 0
         age_bucket[each_age] = dict(sorted(age_bucket[each_age].items()))
-    age_10['bucket_data'] = dict(sorted(age_bucket.items()))
-    sliced_data[0]['age_10'] = age_10
+    data_bucket_age['bucket_data'] = dict(sorted(age_bucket.items()))
+    sliced_data[0]['age_10'] = data_bucket_age
     context = {
         'Info': sliced_data[0],
         'data': sliced_data[1:]
@@ -311,3 +326,134 @@ def readFeatureRank(method, db_name = 'heart_disease.db'):
             i += 1
     conn.close()
     return context
+
+def create_clean_db(db_name='heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from cleanData_drop")
+    except:
+        c.execute('''
+                    create table cleanData_drop (
+                    id integer primary key autoincrement,
+                    age real,
+                    sex real,
+                    pain_type real,
+                    blood_pressure real,
+                    cholestoral real,
+                    blood_sugar real,
+                    electrocardiographic real,
+                    heart_rate real,
+                    angina real,
+                    oldpeak real,
+                    ST_segment real,
+                    vessels real,
+                    thal real,
+                    target integer
+                    )
+                ''')
+        c.execute('''
+                    create table cleanData_knn (
+                    id integer primary key autoincrement,
+                    age real,
+                    sex real,
+                    pain_type real,
+                    blood_pressure real,
+                    cholestoral real,
+                    blood_sugar real,
+                    electrocardiographic real,
+                    heart_rate real,
+                    angina real,
+                    oldpeak real,
+                    ST_segment real,
+                    vessels real,
+                    thal real,
+                    target integer
+                    )
+                ''')
+        conn.commit()
+    conn.close()
+
+def insert_clean_drop(cleaned_data, method = 'drop',db_name='heart_disease.db', replace = True):
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    if method == 'knn':
+        table_name = 'cleanData_knn'
+    else:
+        table_name = 'cleanData_drop'
+    if replace:
+        try:
+            c.execute("DROP TABLE " + table_name)
+            conn.commit()
+        except:
+            print("Warning: recommend use create clean table instead of replace")
+        if method == 'knn':
+            c.execute('''
+                        create table cleanData_knn (
+                        id integer primary key autoincrement,
+                        age real,
+                        sex real,
+                        pain_type real,
+                        blood_pressure real,
+                        cholestoral real,
+                        blood_sugar real,
+                        electrocardiographic real,
+                        heart_rate real,
+                        angina real,
+                        oldpeak real,
+                        ST_segment real,
+                        vessels real,
+                        thal real,
+                        target integer
+                        )
+                    ''')
+        else:
+            c.execute('''
+                        create table cleanData_drop (
+                        id integer primary key autoincrement,
+                        age real,
+                        sex real,
+                        pain_type real,
+                        blood_pressure real,
+                        cholestoral real,
+                        blood_sugar real,
+                        electrocardiographic real,
+                        heart_rate real,
+                        angina real,
+                        oldpeak real,
+                        ST_segment real,
+                        vessels real,
+                        thal real,
+                        target integer
+                        )
+                    ''')
+        conn.commit()
+    nrows, ncols = cleaned_data.shape
+    print(cleaned_data.shape)
+    print("Start: update cleaned data:")
+    bar = progressbar.ProgressBar(maxval=nrows,
+                                  widgets=[progressbar.Bar('#', 'update cleaned data: [', ']'), ' ', progressbar.Percentage()])
+    bar.start()
+    for index, col_values in enumerate(cleaned_data):
+        c.execute("insert into " + table_name + " (age, sex, pain_type, blood_pressure, cholestoral, blood_sugar,"
+                    "electrocardiographic, heart_rate, angina, oldpeak, ST_segment, vessels, thal, target)"
+                    " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", col_values)
+        conn.commit()
+        bar.update(index + 1)
+    # for index, row in cleaned_data.iterrows():
+    #     col_values = []
+    #     for col in range(ncols):
+    #         col_values.append(row[col])
+    #     c.execute("insert into " + table_name + " (age, sex, pain_type, blood_pressure, cholestoral, blood_sugar,"
+    #               "electrocardiographic, heart_rate, angina, oldpeak, ST_segment, vessels, thal, target)"
+    #               " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", col_values)
+    #     conn.commit()
+    #     bar.update(index+1)
+    bar.finish()
+    print("Done: update cleaned data.")
+    conn.close()
+
+def write_db():
+    create_db()
+    loadRawData()
+    create_clean_db()

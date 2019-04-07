@@ -77,7 +77,6 @@ def One_Hot_All(raw_data, target_col, features, means):
     y = []
     test = []
     X = []
-    # print(json.dumps(raw_data, sort_keys=False, indent=4))
     for row in raw_data:
         if row[features[target_col]] == '?':
             test.append(One_Hot_Line(row, target_col, features, means))
