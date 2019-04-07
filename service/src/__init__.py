@@ -66,10 +66,7 @@ class rankFeature(Resource):
         except:
             method = 'drop'
         context = readFeatureRank(method)
-        return Response(status=200, response=dumps(context,
-                                                    sort_keys=False,
-                                                    indent=4))
-
+        return Response(status=200, response=dumps(context, sort_keys=False, indent=4))
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/rankFeature_toDB', endpoint="rankFeature_toDB")
@@ -85,9 +82,7 @@ class rankFeature_toDB(Resource):
         except:
             method = 'drop'
         context = FeatureRankDB(method)
-        return Response(status=201, response=dumps(context,
-                                                    sort_keys=False,
-                                                    indent=4))
+        return Response(status=201, response=dumps(context, sort_keys=False, indent=4))
 
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
