@@ -27,3 +27,8 @@ def KNNCleaner(data, target, test):
     y = np.array(target)
     clf.fit(X, y)
     return clf.predict(np.array(test))
+
+def arrayKNN(X, y, test):
+    clf = KNeighborsClassifier(weights='distance', n_neighbors=3)
+    clf.fit(X, y)
+    return clf.predict(test)
