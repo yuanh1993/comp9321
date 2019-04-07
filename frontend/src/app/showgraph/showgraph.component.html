@@ -4,15 +4,23 @@
     <div ngbDropdown class="d-inline-block w-75" style="margin-left:12%">
       <button class="btn btn-outline-success mr-2 w-100" id="dropdownBasic1" ngbDropdownToggle>Select Data Type</button>
       <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="w-100">
-        <button ngbDropdownItem (click)="pain_type()">pain_type</button>
-        <button ngbDropdownItem>Another Action</button>
-        <button ngbDropdownItem>Something else is here</button>
+        <button ngbDropdownItem (click)="pain_type()">Pain Type</button>
+        <button ngbDropdownItem (click)="blood_pressure()">Blood Pressure</button>
+        <button ngbDropdownItem (click)="serum_cholestoral()">serum cholestoral</button>
       </div>
     </div>
   </div>
 </div>
 <br /><br />
-<div id="chartContainer_age" style="height: 600px; width: 100%;"></div>
+<div *ngIf="type=='pain_type';else second">
+<div id="chartContainer_age"  style="height: 600px; width: 100%;"></div>
+
 <br><br><br><br><br><br><br><br>
 
 <div id="chartContainer_sex" style="height: 600px; width: 100%;"></div>
+</div>
+<ng-template #second>
+  <div *ngIf="type == 'blood_pressure' || type == 'serum_cholestoral'">
+    <div id="continous_bubble_data" style="height: 600px; width: 100%;"></div>
+  </div>
+</ng-template>

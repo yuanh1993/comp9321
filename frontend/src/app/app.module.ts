@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,6 +21,7 @@ import { ShowgraphComponent } from './showgraph/showgraph.component';
     AppRoutingModule,
     HttpClientModule,
     NgbModule,
+    CommonModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
