@@ -4,8 +4,10 @@
     "\\src",
     "\\src\\app",
     "\\src\\app\\navbar",
-    "\\src\\app\\showgraph"
+    "\\src\\app\\showgraph",
+    "\\src\\app\\test",
+    "\\src\\assets"
   ],
-  "SelectedNode": "\\src\\app\\app.module.ts",
+  "SelectedNode": "\\src\\app\\showgraph\\showgraph.component.ts",
   "PreviewInSolutionExplorer": false
 }
