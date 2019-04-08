@@ -11,9 +11,15 @@ def Faker():
     li_test = [4, 4, 5]
     X = np.array(li_x)
     y = np.array(li_y)
-    test = np.array(li_test)
+    test = np.array(li_test).reshape(-1, 3)
     return X, y, test
 
 
 def DecisionTreeLayer(X, y, test):
     clf = DecisionTreeClassifier()
+    clf.fit(X, y)
+    return clf.predict(test)
+
+X, y, test = Faker()
+result = DecisionTreeLayer(X, y, test)
+print(result)
