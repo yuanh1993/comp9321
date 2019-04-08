@@ -142,8 +142,14 @@ def get_slicedData(data_type, bucket_size = 10, db_name='heart_disease.db'):
                     'missing_sign':'?',
                     'data_length':0}]
     for i, row in enumerate(raw_data):
+        sliced_data[0]['data_length'] += 1
         if row[feature] == '?':
-            sliced_data[0]["missing"].append(i)
+            sliced_data[0]["missing"].append({
+                'row_num':i,
+                'age': row['age'],
+                'sex': row['sex']
+            })
+            continue
         age_buck = int(row['age']//bucket_size) * bucket_size
         sliced_data.append({
             'age': row['age'],
@@ -165,7 +171,6 @@ def get_slicedData(data_type, bucket_size = 10, db_name='heart_disease.db'):
             age_bucket[age_buck] = {
                 row[feature]: 1
             }
-        sliced_data[0]['data_length'] += 1
     data_bucket_age['group_count'] = len(age_bucket)
     for each_age in age_bucket:
         for i in bucket_key_set:
