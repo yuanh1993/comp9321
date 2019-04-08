@@ -1,7 +1,10 @@
-import sqlite3, progressbar, sys
+from __future__ import absolute_import
+import sqlite3, progressbar
 import DataEngineer
 from utils import One_Hot_All, discrete_analysis, continous_analysis
 from joblib import Parallel, delayed
+from TrainModel import learningCurve
+# import TrainModel
 
 discrete_data = [
     2, 3, 6, 7, 9, 13, 14
@@ -142,8 +145,14 @@ def get_slicedData(data_type, bucket_size = 10, db_name='heart_disease.db'):
                     'missing_sign':'?',
                     'data_length':0}]
     for i, row in enumerate(raw_data):
+        sliced_data[0]['data_length'] += 1
         if row[feature] == '?':
-            sliced_data[0]["missing"].append(i)
+            sliced_data[0]["missing"].append({
+                'row_num':i,
+                'age': row['age'],
+                'sex': row['sex']
+            })
+            continue
         age_buck = int(row['age']//bucket_size) * bucket_size
         sliced_data.append({
             'age': row['age'],
@@ -165,7 +174,6 @@ def get_slicedData(data_type, bucket_size = 10, db_name='heart_disease.db'):
             age_bucket[age_buck] = {
                 row[feature]: 1
             }
-        sliced_data[0]['data_length'] += 1
     data_bucket_age['group_count'] = len(age_bucket)
     for each_age in age_bucket:
         for i in bucket_key_set:
@@ -443,6 +451,100 @@ def insert_clean_drop(cleaned_data, method = 'drop',db_name='heart_disease.db', 
     print("Done: update cleaned data.")
     conn.close()
 
+def get_cleaned_data_from_DB(method = 'drop',db_name='heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    if method == 'knn':
+        table_name = 'cleanData_knn'
+    else:
+        table_name = 'cleanData_drop'
+    try:
+        c.execute("select * from " + table_name)
+    except:
+        print(table_name + " does not exist!")
+    result = c.fetchall()
+    conn.close()
+    return result
+
+def save_Learning_curve(method='drop',db_name='heart_disease.db'):
+    train_sizes, train_scores, valid_scores = learningCurve(method)
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from learning_curve")
+    except:
+        c.execute('''
+            create table learning_curve(
+                        x_20 real,
+                        x_40 real,
+                        x_60 real,
+                        x_80 real,
+                        x_100 real,
+                        x_120 real,
+                        x_140 real,
+                        x_160 real,
+                        x_180 real,
+                        x_200 real,
+                        x_220 real,
+                        x_240 real,
+                        x_260 real,
+                        label text primary key
+                        )
+        ''')
+        conn.commit()
+    try:
+        train_score = []
+        for x in train_scores:
+            train_score.append(x)
+        train_score.append('train_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+        valid_score = []
+        for x in valid_scores:
+            valid_score.append(x)
+        valid_score.append('valid_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+    except:
+        c.execute("drop table learning_curve")
+        c.execute('''
+                    create table learning_curve(
+                                x_20 real,
+                                x_40 real,
+                                x_60 real,
+                                x_80 real,
+                                x_100 real,
+                                x_120 real,
+                                x_140 real,
+                                x_160 real,
+                                x_180 real,
+                                x_200 real,
+                                x_220 real,
+                                x_240 real,
+                                x_260 real,
+                                label text primary key
+                                )
+                ''')
+        conn.commit()
+        train_score = []
+        for x in train_scores:
+            train_score.append(x)
+        train_score.append('train_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+        valid_score = []
+        for x in valid_scores:
+            valid_score.append(x)
+        valid_score.append('valid_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+    conn.commit()
+    conn.close()
 def write_db():
     create_db()
     loadRawData()

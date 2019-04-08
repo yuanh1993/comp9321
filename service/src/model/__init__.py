@@ -1,14 +1,10 @@
-from sklearn.tree import DecisionTreeClassifier
-import numpy as np
+# from stack import StackClassification
+# import numpy as np
+# from sklearn.model_selection import cross_val_score
+# from sklearn import datasets
 
-X = np.array([1, 10, 30, 60, 85, 86])
-X = np.reshape(X, (6, 1))
-# X = (X - np.mean(X))/(np.std(X))
-
-# print(X)
-# X = np.reshape(X, (6, 1))
-y = np.array([0, 0, 0, 1, 1, 1])
-# print(np.cov(X, y))
-clf = DecisionTreeClassifier(random_state=0)
-clf = clf.fit(X, y)
-print(clf)
+# X, y = datasets.load_iris(return_X_y=True)
+# clf = StackClassification()
+# print(y)
+# scores = cross_val_score(clf, X, y, cv=5, scoring = 'neg_log_loss')
+# print(scores)

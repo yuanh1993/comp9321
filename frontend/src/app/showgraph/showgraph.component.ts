@@ -31,6 +31,19 @@ export class ShowgraphComponent implements OnInit {
     this.pain_type_sex();
   }
 
+  electrocardiographic() {
+    this.type = 'electrocardiographic';
+    this.electrocardiographic_age();
+    this.electrocardiographic_sex();
+  }
+
+  blood_sugar() {
+    this.type = 'blood_sugar';
+    this.blood_sugar_age();
+    this.blood_sugar_sex();
+  }
+
+
   serum_cholestoral() {
     this.type = 'serum_cholestoral';
     let dataPoints_male = [];
@@ -169,6 +182,159 @@ export class ShowgraphComponent implements OnInit {
     chart.render();
   }
 
+  blood_sugar_age() {
+    this.getdataservice.getdata(6).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let dataPoints_false = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints:[],
+        }]
+
+        let dataPoints_true = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints:[]
+        }]
+        for (let i = 0; i < group; i++) {
+          dataPoints_false[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` });
+          dataPoints_true[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` })
+        }
+        let totalmale = 0;
+        let totalfemale = 0;
+        for (let d of data.data) {
+          if (d.value == 1.0) {
+            totalmale++;
+            dataPoints_true[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_false[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+        }
+        for (let i = 0; i < group; i++) {
+          dataPoints_true[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+          dataPoints_false[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+        }
+        console.log(dataPoints_true);
+        console.log(dataPoints_false);
+        this.pie_chart('chartContainer_pie_true_age', 'Blood Sugar True', dataPoints_true);
+        this.pie_chart('chartContainer_pie_false_age', 'Blood Sugar False', dataPoints_false);
+      }
+    );
+  }
+
+
+  pie_chart(chart_name:string,title:string,datapoints) {
+    var chart = new CanvasJS.Chart(chart_name, {
+      animationEnabled: true,
+      title: {
+        text: title
+      },
+      data: datapoints
+    });
+    chart.render();
+  }
+
+  blood_sugar_sex() {
+    this.getdataservice.getdata(6).subscribe(
+      data => {
+
+        let dataPoints_male = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: [],
+        }]
+
+        let dataPoints_female = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: []
+        }]
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'False' });
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'True' });
+
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `False` })
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `True` })
+        let totalmale = 0;
+        let totalfemale = 0;
+
+        for (let d of data.data) {
+          if (d.sex == 1.0) {
+            totalmale++;
+            dataPoints_male[0].dataPoints[Math.floor(d.value)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_female[0].dataPoints[Math.floor(d.value)].y++;
+          }
+        }
+        dataPoints_male[0].dataPoints[0].y = dataPoints_male[0].dataPoints[0].y * 100 / totalmale;
+        dataPoints_male[0].dataPoints[1].y = dataPoints_male[0].dataPoints[1].y * 100 / totalmale;
+
+        dataPoints_female[0].dataPoints[0].y = dataPoints_female[0].dataPoints[0].y * 100 / totalfemale;
+        dataPoints_female[0].dataPoints[1].y = dataPoints_female[0].dataPoints[1].y * 100 / totalfemale;
+        console.log(dataPoints_female);
+        console.log(dataPoints_male);
+        this.pie_chart('chartContainer_pie_male', 'Blood Sugar Male', dataPoints_male);
+        this.pie_chart('chartContainer_pie_female', 'Blood Sugar Female', dataPoints_female);
+      }
+    );
+  }
+
+  electrocardiographic_age() {
+    let dataPoints = [];
+    this.getdataservice.getdata(7).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let group_total = [];
+        for (let i = 0; i < group; i++) {
+          dataPoints.push({
+            type: "bar",
+            showInLegend: true,
+            name: `${i * 10} to ${(i + 1) * 10} years old`,
+            color: this.getRandomColor(i),
+            dataPoints: [
+              { y: 0, label: "normal" },
+              { y: 0, label: "having ST-T wave abnormality" },
+              { y: 0, label: "Estes" }]
+          });
+          group_total.push(0);
+        }
+        for (let d of data.data) {
+          dataPoints[Math.floor(d.age / 10)].dataPoints[(Math.floor(d.value))].y++;
+          group_total[Math.floor(d.age / 10)]++;
+        }
+        for (let i = 0; i < group; i++) {
+          for (let d of dataPoints[i].dataPoints) {
+            d.y = d.y / group_total[i] * 100;
+          }
+        }
+        this.barchat(dataPoints, 'Electrocardiographic vs. Age', 'Percentage of Population in Each Group', 'chartContainer_age');
+      });
+  }
+
   pain_type_age() {
     let dataPoints = [];
     this.getdataservice.getdata(3).subscribe(
@@ -180,6 +346,7 @@ export class ShowgraphComponent implements OnInit {
           }
         }
         let group = Math.ceil(max / 10);
+        let group_total = [];
         for (let i = 0; i < group; i++) {
           dataPoints.push({
             type: "bar",
@@ -192,11 +359,62 @@ export class ShowgraphComponent implements OnInit {
               { y: 0, label: "non-anginal pain" },
               { y: 0, label: "asymptomatic" }]
           });
+          group_total.push(0);
         }
         for (let d of data.data) {
           dataPoints[Math.floor(d.age / 10)].dataPoints[(Math.floor(d.value - 1))].y++;
+          group_total[Math.floor(d.age / 10)]++;
         }
-        this.barchat(dataPoints, 'Pain Type vs. Age', 'Population', 'chartContainer_age');
+        for (let i = 0; i < group; i++) {
+          for (let d of dataPoints[i].dataPoints) {
+            d.y = d.y / group_total[i] * 100;
+          }
+        }
+        this.barchat(dataPoints, 'Pain Type vs. Age', 'Percentage of Population in Each Group', 'chartContainer_age');
+      });
+  }
+
+  electrocardiographic_sex() {
+    let dataPoints = [];
+    this.getdataservice.getdata(7).subscribe(
+      data => {
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Female',
+          color: '#ff0000',
+          dataPoints: [
+            { y: 0, label: "normal" },
+            { y: 0, label: "having ST-T wave abnormality" },
+            { y: 0, label: "Estes" }]
+        });
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Male',
+          color: '#000000',
+          dataPoints: [
+            { y: 0, label: "normal" },
+            { y: 0, label: "having ST-T wave abnormality" },
+            { y: 0, label: "Estes" }]
+        });
+
+        let male_number = 0
+        let female_number = 0
+        for (let d of data.data) {
+          if (d.sex == 0) {
+            female_number++;
+          }
+          else {
+            male_number++;
+          }
+          dataPoints[Math.floor(d.sex)].dataPoints[(Math.floor(d.value))].y++;
+        }
+        for (let i = 0; i < 3; i++) {
+          dataPoints[0].dataPoints[i].y = dataPoints[0].dataPoints[i].y / female_number * 100
+          dataPoints[1].dataPoints[i].y = dataPoints[1].dataPoints[i].y / male_number * 100
+        }
+        this.barchat(dataPoints, 'Electrocardiographic vs. Sex', 'Percentage of Population in Sex', 'chartContainer_sex');
       });
   }
 
@@ -227,12 +445,22 @@ export class ShowgraphComponent implements OnInit {
             { y: 0, label: "asymptomatic" }]
         });
 
-
+        let male_number = 0
+        let female_number = 0
         for (let d of data.data) {
+          if (d.sex == 0) {
+            female_number++;
+          }
+          else {
+            male_number++;
+          }
           dataPoints[Math.floor(d.sex)].dataPoints[(Math.floor(d.value - 1))].y++;
         }
-        this.barchat(dataPoints, 'Pain Type vs. Sex', 'Population','chartContainer_sex');
+        for (let i = 0; i < 4; i++) {
+          dataPoints[0].dataPoints[i].y = dataPoints[0].dataPoints[i].y / female_number * 100
+          dataPoints[1].dataPoints[i].y = dataPoints[1].dataPoints[i].y / male_number * 100
+        }
+        this.barchat(dataPoints, 'Pain Type vs. Sex', 'Percentage of Population in Sex','chartContainer_sex');
       });
   }
-
 }
