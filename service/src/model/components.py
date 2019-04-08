@@ -1,6 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
-import tensorflow as tf
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 
@@ -22,13 +22,11 @@ def DecisionTreeLayer(X, y, test):
     clf.fit(X, y)
     return clf.predict(test)
 
-def NeuralNetworkLayer():
-    li_x = [
-        [1, 2, 3],
-        [4, 5, 6]
-    ]
-    li_y = [1, 0]
-    li_test = [4, 4, 5]
+def NeuralNetworkLayer(X, y, test):
+    clf = MLPClassifier(solver='adam', alpha=1e-5,
+                        hidden_layer_sizes = (8,), max_iter= 10000)
+    clf.fit(X, y)
+    return clf.predict(test)
 
 def SVMLayer(X, y, test):
     clf = SVC(kernel='rbf', gamma='auto')
