@@ -448,6 +448,22 @@ def insert_clean_drop(cleaned_data, method = 'drop',db_name='heart_disease.db', 
     print("Done: update cleaned data.")
     conn.close()
 
+def get_cleaned_data_from_DB(method = 'drop',db_name='heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    if method == 'knn':
+        table_name = 'cleanData_knn'
+    else:
+        table_name = 'cleanData_drop'
+    try:
+        c.execute("select * from " + table_name)
+    except:
+        print(table_name + " does not exist!")
+    result = c.fetchall()
+    conn.close()
+    return result
+
 def write_db():
     create_db()
     loadRawData()
