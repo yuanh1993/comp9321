@@ -8,12 +8,13 @@
         <button ngbDropdownItem (click)="blood_pressure()">Blood Pressure</button>
         <button ngbDropdownItem (click)="serum_cholestoral()">serum cholestoral</button>
         <button ngbDropdownItem (click)="blood_sugar()">Blood Sugar</button>
+        <button ngbDropdownItem (click)="electrocardiographic()">Electrocardiographic</button>
       </div>
     </div>
   </div>
 </div>
 <br /><br />
-<div *ngIf="type=='pain_type' ;else second">
+<div *ngIf="type=='pain_type'|| type=='electrocardiographic';else second">
   <div id="chartContainer_age" style="height: 600px; width: 100%;"></div>
 
   <br><br><br><br><br><br><br><br>
@@ -33,6 +34,7 @@
     <br><br><br><br><br><br><br><br>
     <div id="chartContainer_pie_male" style="height: 600px; width: 100%;"></div>
     <div id="chartContainer_pie_female" style="height: 600px; width: 100%;"></div>
+
   </div>
 </ng-template>
 
