@@ -1,5 +1,6 @@
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
+import tensorflow as tf
 import numpy as np
 
 
@@ -21,11 +22,19 @@ def DecisionTreeLayer(X, y, test):
     clf.fit(X, y)
     return clf.predict(test)
 
+def NeuralNetworkLayer():
+    li_x = [
+        [1, 2, 3],
+        [4, 5, 6]
+    ]
+    li_y = [1, 0]
+    li_test = [4, 4, 5]
+
 def SVMLayer(X, y, test):
     clf = SVC(kernel='rbf', gamma='auto')
     clf.fit(X, y)
     return clf.predict(test)
 
 X, y, test = Faker()
-result = SVMLayer(X, y, test)
+result = NeuralNetworkLayer(X, y, test)
 print(result)

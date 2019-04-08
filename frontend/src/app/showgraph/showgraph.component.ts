@@ -302,6 +302,7 @@ export class ShowgraphComponent implements OnInit {
           }
         }
         let group = Math.ceil(max / 10);
+        let group_total = [];
         for (let i = 0; i < group; i++) {
           dataPoints.push({
             type: "bar",
@@ -314,11 +315,18 @@ export class ShowgraphComponent implements OnInit {
               { y: 0, label: "non-anginal pain" },
               { y: 0, label: "asymptomatic" }]
           });
+          group_total.push(0);
         }
         for (let d of data.data) {
           dataPoints[Math.floor(d.age / 10)].dataPoints[(Math.floor(d.value - 1))].y++;
+          group_total[Math.floor(d.age / 10)]++;
         }
-        this.barchat(dataPoints, 'Pain Type vs. Age', 'Population', 'chartContainer_age');
+        for (let i = 0; i < group; i++) {
+          for (let d of dataPoints[i].dataPoints) {
+            d.y = d.y / group_total[i] * 100;
+          }
+        }
+        this.barchat(dataPoints, 'Pain Type vs. Age', 'Percentage of Population in Each Group', 'chartContainer_age');
       });
   }
 
@@ -349,12 +357,22 @@ export class ShowgraphComponent implements OnInit {
             { y: 0, label: "asymptomatic" }]
         });
 
-
+        let male_number = 0
+        let female_number = 0
         for (let d of data.data) {
+          if (d.sex == 0) {
+            female_number++;
+          }
+          else {
+            male_number++;
+          }
           dataPoints[Math.floor(d.sex)].dataPoints[(Math.floor(d.value - 1))].y++;
+        }
+        for (let i = 0; i < 4; i++) {
+          dataPoints[0].dataPoints[i].y = dataPoints[0].dataPoints[i].y / female_number * 100
+          dataPoints[1].dataPoints[i].y = dataPoints[1].dataPoints[i].y / male_number * 100
         }
         this.barchat(dataPoints, 'Pain Type vs. Sex', 'Population','chartContainer_sex');
       });
   }
-
 }
