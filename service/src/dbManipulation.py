@@ -91,9 +91,9 @@ def loadRawData(db_name='heart_disease.db'):
         c.execute("insert into rawData (age, sex, pain_type, blood_pressure, cholestoral, blood_sugar,"
                   "electrocardiographic, heart_rate, angina, oldpeak, ST_segment, vessels, thal, target)"
                   " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", col_values)
-        conn.commit()
         bar.update(index+1)
     bar.finish()
+    conn.commit()
     print("Done: load data.")
     conn.close()
 
@@ -429,7 +429,6 @@ def insert_clean_drop(cleaned_data, method = 'drop',db_name='heart_disease.db', 
                     ''')
         conn.commit()
     nrows, ncols = cleaned_data.shape
-    print(cleaned_data.shape)
     print("Start: update cleaned data:")
     bar = progressbar.ProgressBar(maxval=nrows,
                                   widgets=[progressbar.Bar('#', 'update cleaned data: [', ']'), ' ', progressbar.Percentage()])
@@ -438,18 +437,9 @@ def insert_clean_drop(cleaned_data, method = 'drop',db_name='heart_disease.db', 
         c.execute("insert into " + table_name + " (age, sex, pain_type, blood_pressure, cholestoral, blood_sugar,"
                     "electrocardiographic, heart_rate, angina, oldpeak, ST_segment, vessels, thal, target)"
                     " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", col_values)
-        conn.commit()
         bar.update(index + 1)
-    # for index, row in cleaned_data.iterrows():
-    #     col_values = []
-    #     for col in range(ncols):
-    #         col_values.append(row[col])
-    #     c.execute("insert into " + table_name + " (age, sex, pain_type, blood_pressure, cholestoral, blood_sugar,"
-    #               "electrocardiographic, heart_rate, angina, oldpeak, ST_segment, vessels, thal, target)"
-    #               " values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", col_values)
-    #     conn.commit()
-    #     bar.update(index+1)
     bar.finish()
+    conn.commit()
     print("Done: update cleaned data.")
     conn.close()
 

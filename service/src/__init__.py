@@ -6,7 +6,7 @@ from dbManipulation import (write_db, feature_map, get_slicedData,
                             RankFeatures, FeatureRankDB, readFeatureRank)
 from json import loads, dumps
 from flask_cors import CORS
-from WashDog import sweep
+from WashDog import sweep, decoration
 
 db_name = 'heart_disease.db'
 total_feature = 14
@@ -106,6 +106,9 @@ class saveCleanDataDB(Resource):
         if method == 'drop':
             sweep()
             context = "Data cleaned with drop dirty data and saved to DB"
+        else:
+            decoration()
+            context = "Data cleaned with KNN predict dirty data and saved to DB"
         return Response(status=201, response=context)
 
 if __name__ == '__main__':
