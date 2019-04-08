@@ -17,11 +17,11 @@ def Faker():
     return X, y, test
 
 
-def DecisionTreeLayer(X, y, test):
+def DecisionTreeLayer():
     return DecisionTreeClassifier()
 
 
-def NeuralNetworkLayer(X, y, test):
+def NeuralNetworkLayer():
     return MLPClassifier(solver='adam', alpha=1e-5,
                         hidden_layer_sizes = (8,), max_iter= 10000)
 
@@ -29,7 +29,18 @@ def NeuralNetworkLayer(X, y, test):
 def SVMLayer():
     return SVC(kernel='rbf', gamma='auto')
 
-
-X, y, test = Faker()
-result = NeuralNetworkLayer(X, y, test)
-print(result)
+#
+# X, y, test = Faker()
+# # result = NeuralNetworkLayer(X, y, test)
+#
+# x1 = np.array([1, 1, 1, 1]).reshape(-1,1)
+# x2 = np.array([2, 2, 2, 2]).reshape(-1,1)
+# x3 = np.array([3, 3, 3, 3]).reshape(-1,1)
+# print(np.concatenate((x1, x2, x3), axis=1))
+#
+# clf = NeuralNetworkLayer()
+# X = np.array([[1, 1], [1, 2], [2, 2]])
+# y = np.dot(X, np.array([1, 2])) + 3
+# clf.fit(X, y)
+# test = np.array([[3, 5], [1,2]])
+# print(clf.predict(test))
