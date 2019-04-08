@@ -1,4 +1,4 @@
-# from stack import StackClassification
+# from .stack import StackClassification
 # import numpy as np
 # from sklearn.model_selection import cross_val_score
 # from sklearn import datasets
