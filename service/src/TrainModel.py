@@ -1,11 +1,11 @@
 from model.stack import StackClassification
-from dbManipulation import get_cleaned_data_from_DB
+import dbManipulation
 import numpy as np
 from sklearn.externals import joblib
 from sklearn.model_selection import learning_curve
 
 def training_model(method = 'drop'):
-    db = get_cleaned_data_from_DB(method)
+    db = dbManipulation.get_cleaned_data_from_DB(method)
     db_list = []
     target = []
     for line in db:
@@ -36,7 +36,7 @@ def readModel(filename = 'model.sav'):
     return clf
 
 def learningCurve(method='drop'):
-    db = get_cleaned_data_from_DB(method)
+    db = dbManipulation.get_cleaned_data_from_DB(method)
     db_list = []
     target = []
     for line in db:
@@ -54,6 +54,7 @@ def learningCurve(method='drop'):
         db_list.append(line_list)
     X = np.array(db_list)
     y = np.array(target)
+    print("Start training...")
     train_sizes, train_scores, valid_scores = learning_curve(
                                                              StackClassification(),
                                                              X,
@@ -63,4 +64,5 @@ def learningCurve(method='drop'):
                                                                             220, 240, 260],
                                                              cv = 10,
                                                              scoring='roc_auc')
-    return train_sizes, np.mean(train_scores, axis = 0), np.mean(valid_scores, axis = 0)
+    print("finish training")
+    return train_sizes, np.mean(train_scores, axis = 1), np.mean(valid_scores, axis = 1)
