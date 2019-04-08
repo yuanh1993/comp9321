@@ -18,20 +18,17 @@ def Faker():
 
 
 def DecisionTreeLayer(X, y, test):
-    clf = DecisionTreeClassifier()
-    clf.fit(X, y)
-    return clf.predict(test)
+    return DecisionTreeClassifier()
+
 
 def NeuralNetworkLayer(X, y, test):
-    clf = MLPClassifier(solver='adam', alpha=1e-5,
+    return MLPClassifier(solver='adam', alpha=1e-5,
                         hidden_layer_sizes = (8,), max_iter= 10000)
-    clf.fit(X, y)
-    return clf.predict(test)
 
-def SVMLayer(X, y, test):
-    clf = SVC(kernel='rbf', gamma='auto')
-    clf.fit(X, y)
-    return clf.predict(test)
+
+def SVMLayer():
+    return SVC(kernel='rbf', gamma='auto')
+
 
 X, y, test = Faker()
 result = NeuralNetworkLayer(X, y, test)
