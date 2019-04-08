@@ -35,8 +35,8 @@ def readModel(filename = 'model.sav'):
     clf = joblib.load(filename)
     return clf
 
-def learningCurve():
-    db = get_cleaned_data_from_DB()
+def learningCurve(method='drop'):
+    db = get_cleaned_data_from_DB(method)
     db_list = []
     target = []
     for line in db:
@@ -63,6 +63,4 @@ def learningCurve():
                                                                             220, 240, 260],
                                                              cv = 10,
                                                              scoring='roc_auc')
-    return train_sizes, train_scores, valid_scores
-
-learningCurve()
+    return train_sizes, np.mean(train_scores, axis = 0), np.mean(valid_scores, axis = 0)

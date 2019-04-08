@@ -2,6 +2,7 @@ import sqlite3, progressbar, sys
 import DataEngineer
 from utils import One_Hot_All, discrete_analysis, continous_analysis
 from joblib import Parallel, delayed
+import TrainModel
 
 discrete_data = [
     2, 3, 6, 7, 9, 13, 14
@@ -463,6 +464,62 @@ def get_cleaned_data_from_DB(method = 'drop',db_name='heart_disease.db'):
     result = c.fetchall()
     conn.close()
     return result
+
+def save_Learning_curve(method='drop',db_name='heart_disease.db'):
+    train_sizes, train_scores, valid_scores = TrainModel.learningCurve(method)
+    conn = sqlite3.connect(db_name)
+    c = conn.cursor()
+    try:
+        c.execute("select * from learning_curve")
+    except:
+        c.execute('''
+            create table learning_curve(
+                        x_20 real,
+                        x_40 real,
+                        x_60 real,
+                        x_80 real,
+                        x_100 real,
+                        x_120 real,
+                        x_140 real,
+                        x_160 real,
+                        x_180 real,
+                        x_200 real,
+                        x_220 real,
+                        x_240 real,
+                        x_260 real,
+                        label text primary key
+                        )
+        ''')
+        conn.commit()
+    try:
+        train_size = []
+        for x in train_sizes:
+            train_size.append(x)
+        train_size.append('x_axis')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_size)
+        train_score = []
+        for x in train_scores:
+            train_score.append(x)
+        train_score.append('train_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+        valid_score = []
+        for x in valid_scores:
+            valid_score.append(x)
+        valid_score.append('train_score')
+        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                  " x_180, x_200, x_220, x_240, x_260, label) values "
+                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+    except:
+        c.execute("drop table learning_curve")
+        conn.commit()
+        conn.close()
+        save_Learning_curve(method)
+    conn.commit()
+    conn.close()
 
 def write_db():
     create_db()
