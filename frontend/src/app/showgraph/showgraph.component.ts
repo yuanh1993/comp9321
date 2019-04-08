@@ -31,6 +31,13 @@ export class ShowgraphComponent implements OnInit {
     this.pain_type_sex();
   }
 
+  blood_sugar() {
+    this.type = 'blood_sugar';
+    this.blood_sugar_age();
+    this.blood_sugar_sex();
+  }
+
+
   serum_cholestoral() {
     this.type = 'serum_cholestoral';
     let dataPoints_male = [];
@@ -167,6 +174,121 @@ export class ShowgraphComponent implements OnInit {
       data: dataPoints
     });
     chart.render();
+  }
+
+  blood_sugar_age() {
+    this.getdataservice.getdata(6).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let dataPoints_false = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints:[],
+        }]
+
+        let dataPoints_true = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints:[]
+        }]
+        for (let i = 0; i < group; i++) {
+          dataPoints_false[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` });
+          dataPoints_true[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` })
+        }
+        let totalmale = 0;
+        let totalfemale = 0;
+        for (let d of data.data) {
+          if (d.value == 1.0) {
+            totalmale++;
+            dataPoints_true[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_false[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+        }
+        for (let i = 0; i < group; i++) {
+          dataPoints_true[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+          dataPoints_false[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+        }
+        console.log(dataPoints_true);
+        console.log(dataPoints_false);
+        this.pie_chart('chartContainer_pie_true_age', 'Blood Sugar True', dataPoints_true);
+        this.pie_chart('chartContainer_pie_false_age', 'Blood Sugar False', dataPoints_false);
+      }
+    );
+  }
+
+
+  pie_chart(chart_name:string,title:string,datapoints) {
+    var chart = new CanvasJS.Chart(chart_name, {
+      animationEnabled: true,
+      title: {
+        text: title
+      },
+      data: datapoints
+    });
+    chart.render();
+  }
+
+  blood_sugar_sex() {
+    this.getdataservice.getdata(6).subscribe(
+      data => {
+
+        let dataPoints_male = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: [],
+        }]
+
+        let dataPoints_female = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: []
+        }]
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'False' });
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'True' });
+
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `False` })
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `True` })
+        let totalmale = 0;
+        let totalfemale = 0;
+
+        for (let d of data.data) {
+          if (d.sex == 1.0) {
+            totalmale++;
+            dataPoints_male[0].dataPoints[Math.floor(d.value)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_female[0].dataPoints[Math.floor(d.value)].y++;
+          }
+        }
+        dataPoints_male[0].dataPoints[0].y = dataPoints_male[0].dataPoints[0].y * 100 / totalmale;
+        dataPoints_male[0].dataPoints[1].y = dataPoints_male[0].dataPoints[1].y * 100 / totalmale;
+
+        dataPoints_female[0].dataPoints[0].y = dataPoints_female[0].dataPoints[0].y * 100 / totalfemale;
+        dataPoints_female[0].dataPoints[1].y = dataPoints_female[0].dataPoints[1].y * 100 / totalfemale;
+        console.log(dataPoints_female);
+        console.log(dataPoints_male);
+        this.pie_chart('chartContainer_pie_male', 'Blood Sugar Male', dataPoints_male);
+        this.pie_chart('chartContainer_pie_female', 'Blood Sugar Female', dataPoints_female);
+      }
+    );
   }
 
   pain_type_age() {
