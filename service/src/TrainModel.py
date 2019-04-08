@@ -2,6 +2,7 @@ from model.stack import StackClassification
 from dbManipulation import get_cleaned_data_from_DB
 import numpy as np
 from sklearn.externals import joblib
+from sklearn.model_selection import learning_curve
 
 def training_model(method = 'drop'):
     db = get_cleaned_data_from_DB(method)
@@ -13,7 +14,10 @@ def training_model(method = 'drop'):
             if key == 'id':
                 continue
             elif key == 'target':
-                target.append(line[key])
+                cls = line[key]
+                if cls > 0:
+                    cls = 1
+                target.append(cls)
             else:
                 line_list.append(line[key])
         db_list.append(line_list)
@@ -31,7 +35,34 @@ def readModel(filename = 'model.sav'):
     clf = joblib.load(filename)
     return clf
 
-data = np.array([[52.0,1.0,4.0,125.0,212.0,0.0,0.0,168.0,0.0,1.0,1.0,2.0,7.0],
-                 [62.0,1.0,2.0,128.0,208.0,1.0,2.0,140.0,0.0,0.0,1.0,0.0,3.0]])
-clf = readModel()
-print(clf.predict(data))
+def learningCurve():
+    db = get_cleaned_data_from_DB()
+    db_list = []
+    target = []
+    for line in db:
+        line_list = []
+        for key in line:
+            if key == 'id':
+                continue
+            elif key == 'target':
+                cls = line[key]
+                if cls > 0:
+                    cls = 1
+                target.append(cls)
+            else:
+                line_list.append(line[key])
+        db_list.append(line_list)
+    X = np.array(db_list)
+    y = np.array(target)
+    train_sizes, train_scores, valid_scores = learning_curve(
+                                                             StackClassification(),
+                                                             X,
+                                                             y,
+                                                             train_sizes = [20, 40, 60, 80, 100,
+                                                                            120, 140, 160, 180, 200,
+                                                                            220, 240, 260],
+                                                             cv = 10,
+                                                             scoring='roc_auc')
+    return train_sizes, train_scores, valid_scores
+
+learningCurve()
