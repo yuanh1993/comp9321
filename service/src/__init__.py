@@ -133,9 +133,9 @@ class saveLearningCurve(Resource):
 
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
-@api.route('/saveModel', endpoint="saveModel")
+@api.route('/saveModels', endpoint="saveModels")
 @api.doc(params = {'method': 'method'})
-class saveModel(Resource):
+class saveModels(Resource):
     def get(self):
         request.args = request.args.to_dict()
         try:
@@ -146,6 +146,15 @@ class saveModel(Resource):
         except:
             method = 'drop'
         saveModel(method)
+        context = "model saved as .sav"
+        return Response(status=200, response=context)
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/getCurve', endpoint="getCurve")
+class getCurve(Resource):
+    def get(self):
+        #TODO
         context = "model saved as .sav"
         return Response(status=200, response=context)
 
