@@ -155,7 +155,7 @@ class saveModels(Resource):
 class getCurve(Resource):
     def get(self):
         #TODO
-        context = "model saved as .sav"
+        contex t = "model saved as .sav"
         return Response(status=200, response=context)
 
 if __name__ == '__main__':
