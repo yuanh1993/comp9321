@@ -13,23 +13,21 @@
         <button ngbDropdownItem (click)="angina()">Angina</button>
         <button ngbDropdownItem (click)="oldpeak()">Oldpeak</button>
         <button ngbDropdownItem (click)="ST_segment()">The Slope of The Peak Exercise ST Segment</button>
+        <button ngbDropdownItem (click)="Vessels()">Number of Major Vessels</button>
+        <button ngbDropdownItem (click)="Thalassemia()">Thalassemia</button>
       </div>
     </div>
   </div>
 </div>
 <br /><br />
-<div *ngIf="type=='pain_type'|| type=='electrocardiographic';else second">
-<<<<<<< HEAD
+<div *ngIf="type=='pain_type'|| type=='electrocardiographic'|| type=='Vessels'|| type=='Thalassemia';else second">
 
   <div id="chartContainer_age" style="height: 600px; width: 100%;"></div>
 
   <div id="chartContainer_age" style="height: 600px; width: 85%;"></div>
 
-=======
->>>>>>> 1068064ac437c7b5983b02206f42fc800d456061
 
-  <div id="chartContainer_age" style="height: 600px; width: 85%;"></div>
-  <br><br><br><br><br><br><br><br>
+  <br><br><br>
 
   <div id="chartContainer_sex" style="height: 600px; width: 85%;"></div>
 </div>

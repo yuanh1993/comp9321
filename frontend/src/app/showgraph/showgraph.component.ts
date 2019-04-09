@@ -31,6 +31,7 @@ export class ShowgraphComponent implements OnInit {
     this.pain_type_sex();
   }
 
+
   electrocardiographic() {
     this.type = 'electrocardiographic';
     this.electrocardiographic_age();
@@ -48,6 +49,204 @@ export class ShowgraphComponent implements OnInit {
     this.angina_age();
     this.angina_sex();
   }
+
+  Vessels() {
+    this.type = 'Vessels';
+    this.Vessels_age();
+    this.Vessels_sex();
+  }
+
+  Thalassemia() {
+    this.type = 'Vessels';
+    this.Thalassemia_age();
+    this.Thalassemia_sex();
+  }
+
+  Thalassemia_sex() {
+    let dataPoints = [];
+    this.getdataservice.getdata(13).subscribe(
+      data => {
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Female',
+          color: '#ff0000',
+          dataPoints: [
+            { y: 0, label: "normal" },
+            { y: 0, label: " fixed defect" },
+            { y: 0, label: " reversable defect" }]
+        });
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Male',
+          color: '#000000',
+          dataPoints: [
+            { y: 0, label: "normal" },
+            { y: 0, label: " fixed defect" },
+            { y: 0, label: " reversable defect" }]
+        });
+
+        let male_number = 0
+        let female_number = 0
+        for (let d of data.data) {
+          if (d.sex == 0) {
+            female_number++;
+          }
+          else {
+            male_number++;
+          }
+         if (d.value == 3.0) {
+           dataPoints[Math.floor(d.sex)].dataPoints[0].y++;
+          }
+          else if (d.value == 6.0) {
+           dataPoints[Math.floor(d.sex)].dataPoints[1].y++;
+          }
+          else {
+           dataPoints[Math.floor(d.sex)].dataPoints[2].y++;
+          }
+        }
+        for (let i = 0; i < 3; i++) {
+          dataPoints[0].dataPoints[i].y = dataPoints[0].dataPoints[i].y / female_number * 100
+          dataPoints[1].dataPoints[i].y = dataPoints[1].dataPoints[i].y / male_number * 100
+        }
+        this.barchat(dataPoints, 'Thalassemia vs. Sex', 'Percentage of Population in Sex', 'chartContainer_sex');
+      });
+  }
+
+  Thalassemia_age() {
+    let dataPoints = [];
+    this.getdataservice.getdata(13).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let group_total = [];
+        for (let i = 0; i < group; i++) {
+          dataPoints.push({
+            type: "bar",
+            showInLegend: true,
+            name: `${i * 10} to ${(i + 1) * 10} years old`,
+            color: this.getRandomColor(i),
+            dataPoints: [
+              { y: 0, label: "normal" },
+              { y: 0, label: " fixed defect" },
+              { y: 0, label: " reversable defect" }]
+          });
+          group_total.push(0);
+        }
+        for (let d of data.data) {
+          if (d.value == 3.0) {
+            dataPoints[Math.floor(d.age / 10)].dataPoints[0].y++;
+          }
+          else if (d.value == 6.0) {
+            dataPoints[Math.floor(d.age / 10)].dataPoints[1].y++;
+          }
+          else {
+            dataPoints[Math.floor(d.age / 10)].dataPoints[2].y++;
+          }
+          
+          group_total[Math.floor(d.age / 10)]++;
+        }
+        for (let i = 0; i < group; i++) {
+          for (let d of dataPoints[i].dataPoints) {
+            d.y = d.y / group_total[i] * 100;
+          }
+        }
+        this.barchat(dataPoints, 'Thalassemia vs. Age', 'Percentage of Population in Each Group', 'chartContainer_age');
+      });
+  }
+
+  Vessels_sex() {
+    let dataPoints = [];
+    this.getdataservice.getdata(12).subscribe(
+      data => {
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Female',
+          color: '#ff0000',
+          dataPoints: [
+            { y: 0, label: "0.0" },
+            { y: 0, label: "1.0" },
+            { y: 0, label: "2.0" },
+            { y: 0, label: "3.0" }]
+        });
+        dataPoints.push({
+          type: "bar",
+          showInLegend: true,
+          name: 'Male',
+          color: '#000000',
+          dataPoints: [
+            { y: 0, label: "0.0" },
+            { y: 0, label: "1.0" },
+            { y: 0, label: "2.0" },
+            { y: 0, label: "3.0" }]
+        });
+
+        let male_number = 0
+        let female_number = 0
+        for (let d of data.data) {
+          if (d.sex == 0) {
+            female_number++;
+          }
+          else {
+            male_number++;
+          }
+          dataPoints[Math.floor(d.sex)].dataPoints[(Math.floor(d.value ))].y++;
+        }
+        for (let i = 0; i < 4; i++) {
+          dataPoints[0].dataPoints[i].y = dataPoints[0].dataPoints[i].y / female_number * 100
+          dataPoints[1].dataPoints[i].y = dataPoints[1].dataPoints[i].y / male_number * 100
+        }
+        this.barchat(dataPoints, 'Number of Major Vessels vs. Sex', 'Percentage of Population in Sex', 'chartContainer_sex');
+      });
+  }
+
+  Vessels_age() {
+    let dataPoints = [];
+    this.getdataservice.getdata(12).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let group_total = [];
+        for (let i = 0; i < group; i++) {
+          dataPoints.push({
+            type: "bar",
+            showInLegend: true,
+            name: `${i * 10} to ${(i + 1) * 10} years old`,
+            color: this.getRandomColor(i),
+            dataPoints: [
+              { y: 0, label: "0.0" },
+              { y: 0, label: "1.0" },
+              { y: 0, label: "2.0" },
+              { y: 0, label: "3.0" }]
+          });
+          group_total.push(0);
+        }
+        for (let d of data.data) {
+          dataPoints[Math.floor(d.age / 10)].dataPoints[(Math.floor(d.value))].y++;
+          group_total[Math.floor(d.age / 10)]++;
+        }
+        for (let i = 0; i < group; i++) {
+          for (let d of dataPoints[i].dataPoints) {
+            d.y = d.y / group_total[i] * 100;
+          }
+        }
+        this.barchat(dataPoints, 'Number of Major Vessels vs. Age', 'Percentage of Population in Each Group', 'chartContainer_age');
+      });
+  }
+
+
   angina_age() {
     this.getdataservice.getdata(9).subscribe(
       data => {
