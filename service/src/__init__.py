@@ -3,7 +3,9 @@
 from flask import Flask, Response, request, Blueprint
 from flask_restplus import Resource, Api, apidoc
 from dbManipulation import (write_db, feature_map, get_slicedData,
-                            RankFeatures, FeatureRankDB, readFeatureRank)
+                            RankFeatures, FeatureRankDB, readFeatureRank,
+                            save_Learning_curve, get_Curve_DB)
+from TrainModel import saveModel, readModel
 from json import loads, dumps
 from flask_cors import CORS
 from WashDog import sweep, decoration
@@ -85,7 +87,7 @@ class rankFeature_toDB(Resource):
         except:
             method = 'drop'
         context = FeatureRankDB(method)
-        return Response(status=201, response=dumps(context,
+        return Response(status=200, response=dumps(context,
                                                     sort_keys=False,
                                                     indent=4))
 
@@ -109,7 +111,55 @@ class saveCleanDataDB(Resource):
         else:
             decoration()
             context = "Data cleaned with KNN predict dirty data and saved to DB"
-        return Response(status=201, response=context)
+        return Response(status=200, response=context)
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/saveLearningCurve', endpoint="saveLearningCurve")
+@api.doc(params = {'method': 'method'})
+class saveLearningCurve(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        save_Learning_curve(method)
+        context = "Learning saved to DB"
+        return Response(status=200, response=context)
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/saveModels', endpoint="saveModels")
+@api.doc(params = {'method': 'method'})
+class saveModels(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            method = request.args['method'].lower().strip()
+            print(method)
+            if method != 'knn' and method != 'drop':
+                return Response(status=404, response='Only support KNN or drop method.')
+        except:
+            method = 'drop'
+        saveModel(method)
+        context = "model saved as .sav"
+        return Response(status=200, response=context)
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/getCurve', endpoint="getCurve")
+class getCurve(Resource):
+    def get(self):
+        context = get_Curve_DB()
+        if context == None:
+            return Response(status=404, response="Please train model before get curve.")
+        return Response(status=200, response=dumps(context,
+                                                   sort_keys=False,
+                                                    indent=4))
 
 if __name__ == '__main__':
     app.run(debug=True)
