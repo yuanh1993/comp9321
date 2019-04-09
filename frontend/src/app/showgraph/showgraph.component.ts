@@ -43,6 +43,218 @@ export class ShowgraphComponent implements OnInit {
     this.blood_sugar_sex();
   }
 
+  angina() {
+    this.type = 'angina';
+    this.angina_age();
+    this.angina_sex();
+  }
+  angina_age() {
+    this.getdataservice.getdata(9).subscribe(
+      data => {
+        let max = 0
+        for (let d of data.data) {
+          if (d.age > max) {
+            max = d.age
+          }
+        }
+        let group = Math.ceil(max / 10);
+        let dataPoints_false = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: [],
+        }]
+
+        let dataPoints_true = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: []
+        }]
+        for (let i = 0; i < group; i++) {
+          dataPoints_false[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` });
+          dataPoints_true[0].dataPoints.push({ y: 0, label: `${i * 10} to ${(i + 1) * 10}` })
+        }
+        let totalmale = 0;
+        let totalfemale = 0;
+        for (let d of data.data) {
+          if (d.value == 1.0) {
+            totalmale++;
+            dataPoints_true[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_false[0].dataPoints[Math.floor(d.age / 10)].y++;
+          }
+        }
+        for (let i = 0; i < group; i++) {
+          dataPoints_true[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+          dataPoints_false[0].dataPoints[i].y = dataPoints_true[0].dataPoints[i].y / totalmale * 100;
+        }
+        this.pie_chart('chartContainer_pie_true_age', 'Angina True', dataPoints_true);
+        this.pie_chart('chartContainer_pie_false_age', 'Angina False', dataPoints_false);
+      }
+    );
+  }
+
+
+  angina_sex() {
+    this.getdataservice.getdata(9).subscribe(
+      data => {
+
+        let dataPoints_male = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: [],
+        }]
+
+        let dataPoints_female = [{
+          type: "pie",
+          startAngle: 240,
+          yValueFormatString: "##0.00\"%\"",
+          indexLabel: "{label} {y}",
+          dataPoints: []
+        }]
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'False' });
+        dataPoints_male[0].dataPoints.push({ y: 0, label: 'True' });
+
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `False` })
+        dataPoints_female[0].dataPoints.push({ y: 0, label: `True` })
+        let totalmale = 0;
+        let totalfemale = 0;
+
+        for (let d of data.data) {
+          if (d.sex == 1.0) {
+            totalmale++;
+            dataPoints_male[0].dataPoints[Math.floor(d.value)].y++;
+          }
+          else {
+            totalfemale++;
+            dataPoints_female[0].dataPoints[Math.floor(d.value)].y++;
+          }
+        }
+        dataPoints_male[0].dataPoints[0].y = dataPoints_male[0].dataPoints[0].y * 100 / totalmale;
+        dataPoints_male[0].dataPoints[1].y = dataPoints_male[0].dataPoints[1].y * 100 / totalmale;
+
+        dataPoints_female[0].dataPoints[0].y = dataPoints_female[0].dataPoints[0].y * 100 / totalfemale;
+        dataPoints_female[0].dataPoints[1].y = dataPoints_female[0].dataPoints[1].y * 100 / totalfemale;
+        console.log(dataPoints_female);
+        console.log(dataPoints_male);
+        this.pie_chart('chartContainer_pie_male', 'Angina Male', dataPoints_male);
+        this.pie_chart('chartContainer_pie_female', 'Angina Female', dataPoints_female);
+      }
+    );
+  }
+  oldpeak() {
+    this.type = 'oldpeak';
+    let dataPoints_male = [];
+    let dataPoints_female = [];
+    var count: { [id: string]: { x: number, y: number, z: number, name: string } } = {};
+    this.getdataservice.getdata(10).subscribe(
+      data => {
+        for (let d of data.data) {
+          if (count[`${d.age} ${d.value} ${d.sex}`] == undefined) {
+            if (d.sex == 0.0) {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'female' };
+            }
+            else {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'male' };
+            }
+          }
+          else {
+            count[`${d.age} ${d.value} ${d.sex}`].z++;
+          }
+        }
+
+        for (var key in count) {
+          if (count[key].name == 'female') {
+            dataPoints_female.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+          else {
+            dataPoints_male.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+        }
+        this.continous_bubble_data(dataPoints_male, dataPoints_female, "ST depression induced by exercise relative to rest vs. Age in Different Sex", "Age", "Oldpeak",
+          "<b>Male</b><br/>Age: {x} yrs<br/> Oldpeak: {y}<br/> Population: {z}",
+          "<b>Female</b><br/>Age: {x} yrs<br/> Oldpeak: {y}<br/> Population: {z}",
+          50, -6, 10);
+      });
+  }
+  ST_segment() {
+    this.type = 'ST_segment';
+    let dataPoints_male = [];
+    let dataPoints_female = [];
+    var count: { [id: string]: { x: number, y: number, z: number, name: string } } = {};
+    this.getdataservice.getdata(11).subscribe(
+      data => {
+        for (let d of data.data) {
+          if (count[`${d.age} ${d.value} ${d.sex}`] == undefined) {
+            if (d.sex == 0.0) {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'female' };
+            }
+            else {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'male' };
+            }
+          }
+          else {
+            count[`${d.age} ${d.value} ${d.sex}`].z++;
+          }
+        }
+
+        for (var key in count) {
+          if (count[key].name == 'female') {
+            dataPoints_female.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+          else {
+            dataPoints_male.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+        }
+        this.continous_bubble_data(dataPoints_male, dataPoints_female, "The Slope of The Peak Exercise ST Segment vs. Age in Different Sex", "Age", "ST Segment",
+          "<b>Male</b><br/>Age: {x} yrs<br/> ST Segment: {y}<br/> Population: {z}",
+          "<b>Female</b><br/>Age: {x} yrs<br/> ST Segment: {y}<br/> Population: {z}",
+          50, -2, 40);
+      });
+  }
+
+  heart_rate() {
+    this.type = 'heart_rate';
+    let dataPoints_male = [];
+    let dataPoints_female = [];
+    var count: { [id: string]: { x: number, y: number, z: number, name: string } } = {};
+    this.getdataservice.getdata(8).subscribe(
+      data => {
+        for (let d of data.data) {
+          if (count[`${d.age} ${d.value} ${d.sex}`] == undefined) {
+            if (d.sex == 0.0) {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'female' };
+            }
+            else {
+              count[`${d.age} ${d.value} ${d.sex}`] = { x: d.age, y: d.value, z: 1, name: 'male' };
+            }
+          }
+          else {
+            count[`${d.age} ${d.value} ${d.sex}`].z++;
+          }
+        }
+
+        for (var key in count) {
+          if (count[key].name == 'female') {
+            dataPoints_female.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+          else {
+            dataPoints_male.push({ x: count[key].x, y: count[key].y, z: count[key].z });
+          }
+        }
+        this.continous_bubble_data(dataPoints_male, dataPoints_female, "Maximum Heart Rate Achieved vs. Age in Different Sex", "Age", "Heart Rate",
+          "<b>Male</b><br/>Age: {x} yrs<br/> Heart Rate: {y}<br/> Population: {z}",
+          "<b>Female</b><br/>Age: {x} yrs<br/> Heart Rate: {y}<br/> Population: {z}",
+          40, 200, 20);
+      });
+  }
 
   serum_cholestoral() {
     this.type = 'serum_cholestoral';
@@ -235,18 +447,6 @@ export class ShowgraphComponent implements OnInit {
     );
   }
 
-
-  pie_chart(chart_name:string,title:string,datapoints) {
-    var chart = new CanvasJS.Chart(chart_name, {
-      animationEnabled: true,
-      title: {
-        text: title
-      },
-      data: datapoints
-    });
-    chart.render();
-  }
-
   blood_sugar_sex() {
     this.getdataservice.getdata(6).subscribe(
       data => {
@@ -295,6 +495,17 @@ export class ShowgraphComponent implements OnInit {
         this.pie_chart('chartContainer_pie_female', 'Blood Sugar Female', dataPoints_female);
       }
     );
+  }
+
+  pie_chart(chart_name: string, title: string, datapoints) {
+    var chart = new CanvasJS.Chart(chart_name, {
+      animationEnabled: true,
+      title: {
+        text: title
+      },
+      data: datapoints
+    });
+    chart.render();
   }
 
   electrocardiographic_age() {

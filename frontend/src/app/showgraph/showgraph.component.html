@@ -9,29 +9,33 @@
         <button ngbDropdownItem (click)="serum_cholestoral()">serum cholestoral</button>
         <button ngbDropdownItem (click)="blood_sugar()">Blood Sugar</button>
         <button ngbDropdownItem (click)="electrocardiographic()">Electrocardiographic</button>
+        <button ngbDropdownItem (click)="heart_rate()">Heart Rate</button>
+        <button ngbDropdownItem (click)="angina()">Angina</button>
+        <button ngbDropdownItem (click)="oldpeak()">Oldpeak</button>
+        <button ngbDropdownItem (click)="ST_segment()">The Slope of The Peak Exercise ST Segment</button>
       </div>
     </div>
   </div>
 </div>
 <br /><br />
 <div *ngIf="type=='pain_type'|| type=='electrocardiographic';else second">
-<<<<<<< HEAD
+
   <div id="chartContainer_age" style="height: 600px; width: 100%;"></div>
-=======
+
   <div id="chartContainer_age" style="height: 600px; width: 85%;"></div>
->>>>>>> origin/master
+
 
   <br><br><br><br><br><br><br><br>
 
   <div id="chartContainer_sex" style="height: 600px; width: 85%;"></div>
 </div>
 <ng-template #second>
-  <div *ngIf="type == 'blood_pressure' || type == 'serum_cholestoral';else third">
+  <div *ngIf="type == 'blood_pressure' || type == 'serum_cholestoral' || type == 'heart_rate' || type == 'oldpeak' ||type == 'ST_segment';else third">
     <div id="continous_bubble_data" style="height: 600px; width: 85%;"></div>
   </div>
 </ng-template>
 <ng-template #third>
-  <div *ngIf="type == 'blood_sugar' ">
+  <div *ngIf="type == 'blood_sugar' || type == 'angina' ">
     <div id="chartContainer_pie_true_age" style="height: 600px; width: 100%;"></div>
 
     <div id="chartContainer_pie_false_age" style="height: 600px; width: 100%;"></div>
