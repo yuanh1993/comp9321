@@ -8,6 +8,7 @@ import { TestComponent } from './test/test.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { HttpClientModule }    from '@angular/common/http';
 import { ShowgraphComponent } from './showgraph/showgraph.component';
+import { RankComponent } from './rank/rank.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { ShowgraphComponent } from './showgraph/showgraph.component';
     TestComponent,
     NavbarComponent,
     ShowgraphComponent,
+    RankComponent,
   ],
   imports: [
     BrowserModule,

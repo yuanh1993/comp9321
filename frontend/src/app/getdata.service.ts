@@ -24,4 +24,7 @@ export class GetdataService {
   getdata(id:number){
     return this.http.get<any>(`${this.baseurl}/getData/${id}`);
   }
+  getrank(method: string) {
+    return this.http.get<any>(`${this.baseurl}/rankFeature?method=${method}`);
+  }
 }

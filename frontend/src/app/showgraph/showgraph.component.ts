@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { GetdataService } from '../getdata.service';
 import * as CanvasJS from '../../assets/canvasjs.min';
-import { all } from 'q';
 @Component({
   selector: 'app-showgraph',
   templateUrl: './showgraph.component.html',
