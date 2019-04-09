@@ -121,13 +121,15 @@ class saveLearningCurve(Resource):
     def get(self):
         request.args = request.args.to_dict()
         try:
-            method = request.args['method'].lower().strip()
             model_type = request.args['model_type'].lower().strip()
+        except:
+            model_type = 'stack'
+        try:
+            method = request.args['method'].lower().strip()
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-            model_type = 'stack'
         save_Learning_curve(method = method, model_type = model_type)
         context = "Learning saved to DB"
         return Response(status=200, response=context)
@@ -140,13 +142,15 @@ class saveModels(Resource):
     def get(self):
         request.args = request.args.to_dict()
         try:
-            method = request.args['method'].lower().strip()
             model_type = request.args['model_type'].lower().strip()
+        except:
+            model_type = 'stack'
+        try:
+            method = request.args['method'].lower().strip()
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-            model_type = 'stack'
         saveModel(method = method, model_type = model_type)
         context = "model saved as .sav"
         return Response(status=200, response=context)

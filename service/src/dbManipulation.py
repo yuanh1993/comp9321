@@ -468,7 +468,7 @@ def get_cleaned_data_from_DB(method = 'drop',db_name='heart_disease.db'):
     return result
 
 def save_Learning_curve(method='drop',db_name='heart_disease.db', model_type = 'stack'):
-    train_sizes, train_scores, valid_scores = learningCurve(method)
+    train_sizes, train_scores, valid_scores = learningCurve(method=method, model_type=model_type)
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
     if model_type == 'stack':
