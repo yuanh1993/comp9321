@@ -35,6 +35,9 @@ def discrete_analysis(data, target, data_type):
                     one_hot_raw[key].append(1)
                 else:
                     one_hot_raw[key].append(0)
+        for i in range(len(target)):
+            if target[i] > 0:
+                target[i] = 1
         y = np.array(target)
         X = pd.DataFrame(one_hot_raw)
         return DecisionTree(X, y)
@@ -45,6 +48,9 @@ def continous_analysis(data, target, data_type):
     is_continous = data_type in continuous_data
     if not is_continous:
         return -1
+    for i in range(len(target)):
+        if target[i] > 0:
+            target[i] = 1
     X = np.array(data)
     y = np.array(target)
     return Logistic(X, y)
