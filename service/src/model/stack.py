@@ -1,6 +1,4 @@
 from .components import DecisionTreeLayer, BoostingLayer, SVMLayer, LogisticLayer
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import normalize
 import numpy as np
 
 class StackClassification:
@@ -22,16 +20,6 @@ class StackClassification:
         self.SVM.fit(X, y)
         self.Boost.fit(X, y)
         self.DecisionTree.fit(X, y)
-
-        # X_test = X[n_stack:, :]
-        # y_true = y[n_stack:]
-        # X_train = X[:n_stack, :]
-        # y_train = y[:n_stack]
-        # y_tree = self.DecisionTree.fit(X_train, y_train).predict(X_test).reshape(-1,1)
-        # y_b = self.Boost.fit(X_train, y_train).predict(X_test).reshape(-1,1)
-        # y_svm = self.SVM.fit(X_train, y_train).predict(X_test).reshape(-1,1)
-        # X_stacked = np.concatenate((y_tree, y_b, y_svm), axis=1)
-        # self.clf.fit(X_stacked, y_true)
 
     def _fit(self, X, y, test, ans):
         y_tree = self.DecisionTree.fit(X, y).predict(test).reshape(-1, 1)

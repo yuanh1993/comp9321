@@ -63,4 +63,5 @@ def test_learning(method = 'drop'):
     for n in y_test:
         print(n, end=' ')
 
-test_learning(method='drop')
+if __name__ == '__main__':
+    test_learning(method='drop')
