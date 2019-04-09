@@ -4,7 +4,7 @@ from flask import Flask, Response, request, Blueprint
 from flask_restplus import Resource, Api, apidoc
 from dbManipulation import (write_db, feature_map, get_slicedData,
                             RankFeatures, FeatureRankDB, readFeatureRank,
-                            save_Learning_curve)
+                            save_Learning_curve, get_Curve_DB)
 from TrainModel import saveModel, readModel
 from json import loads, dumps
 from flask_cors import CORS
@@ -154,9 +154,12 @@ class saveModels(Resource):
 @api.route('/getCurve', endpoint="getCurve")
 class getCurve(Resource):
     def get(self):
-        #TODO
-        context = "model saved as .sav"
-        return Response(status=200, response=context)
+        context = get_Curve_DB()
+        if context == None:
+            return Response(status=404, response="Please train model before get curve.")
+        return Response(status=200, response=dumps(context,
+                                                   sort_keys=False,
+                                                    indent=4))
 
 if __name__ == '__main__':
     app.run(debug=True)

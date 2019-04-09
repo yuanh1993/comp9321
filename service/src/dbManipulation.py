@@ -545,6 +545,37 @@ def save_Learning_curve(method='drop',db_name='heart_disease.db'):
                   "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
     conn.commit()
     conn.close()
+
+def get_Curve_DB(db_name='heart_disease.db'):
+    conn = sqlite3.connect(db_name)
+    conn.row_factory = dict_factory
+    c = conn.cursor()
+    try:
+        c.execute("select * from learning_curve where label = 'train_score'")
+    except:
+        return None
+    train_raw = c.fetchone()
+    train_score = {}
+    for key in train_raw:
+        if key == 'label':
+            continue
+        clean_key = int(key.split('_')[1])
+        train_score[clean_key] = train_raw[key]
+    context = {
+        'train_score': train_score
+    }
+    c.execute("select * from learning_curve where label = 'valid_score'")
+    valid_raw = c.fetchone()
+    valid_score = {}
+    for key in valid_raw:
+        if key == 'label':
+            continue
+        clean_key = int(key.split('_')[1])
+        valid_score[clean_key] = valid_raw[key]
+    context['valid_score'] = valid_score
+    conn.close()
+    return context
+
 def write_db():
     create_db()
     loadRawData()
