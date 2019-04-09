@@ -6,7 +6,7 @@ from sklearn.preprocessing import normalize
 from sklearn.model_selection import learning_curve
 from sklearn.linear_model import LogisticRegression
 
-def training_model(method = 'drop'):
+def training_model(method = 'drop', model_type = 'stack'):
     db = dbManipulation.get_cleaned_data_from_DB(method)
     db_list = []
     target = []
@@ -41,19 +41,30 @@ def training_model(method = 'drop'):
     X = np.array(db_list)
     X = normalize(X, axis=0, norm='max')
     y = np.array(target)
-    clf = StackClassification()
+    if model_type == 'stack':
+        clf = StackClassification()
+    else:
+        clf = LogisticRegression(C=0.01,penalty = 'l2')
     clf.fit(X, y)
     return clf
 
-def saveModel(method = 'drop', filename = 'model.sav'):
+def saveModel(method = 'drop', model_type = 'stack'):
+    if model_type == 'stack':
+        filename = 'model.sav'
+    else:
+        filename = 'model_logit'
     clf = training_model(method)
     joblib.dump(clf, filename)
 
-def readModel(filename = 'model.sav'):
+def readModel(model_type = 'stack'):
+    if model_type == 'stack':
+        filename = 'model.sav'
+    else:
+        filename = 'model_logit'
     clf = joblib.load(filename)
     return clf
 
-def learningCurve(method='drop'):
+def learningCurve(method='drop', model_type = 'stack'):
     db = dbManipulation.get_cleaned_data_from_DB(method)
     db_list = []
     target = []
@@ -89,8 +100,12 @@ def learningCurve(method='drop'):
     X = normalize(X, axis=0, norm='max')
     y = np.array(target)
     print("Start training...")
+    if model_type == 'stack':
+        clf = StackClassification()
+    else:
+        clf = LogisticRegression(C=0.01,penalty = 'l2')
     train_sizes, train_scores, valid_scores = learning_curve(
-                                                             StackClassification(),
+                                                             clf,
                                                              X,
                                                              y,
                                                              train_sizes = [20, 40, 60, 80, 100,

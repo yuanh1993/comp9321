@@ -116,56 +116,58 @@ class saveCleanDataDB(Resource):
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/saveLearningCurve', endpoint="saveLearningCurve")
-@api.doc(params = {'method': 'method'})
+@api.doc(params = {'method': 'method', 'model_type':'model_type'})
 class saveLearningCurve(Resource):
     def get(self):
         request.args = request.args.to_dict()
         try:
             method = request.args['method'].lower().strip()
-            print(method)
+            model_type = request.args['model_type'].lower().strip()
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-        save_Learning_curve(method)
+            model_type = 'stack'
+        save_Learning_curve(method = method, model_type = model_type)
         context = "Learning saved to DB"
         return Response(status=200, response=context)
 
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/saveModels', endpoint="saveModels")
-@api.doc(params = {'method': 'method'})
+@api.doc(params = {'method': 'method', 'model_type':'model_type'})
 class saveModels(Resource):
     def get(self):
         request.args = request.args.to_dict()
         try:
             method = request.args['method'].lower().strip()
-            print(method)
+            model_type = request.args['model_type'].lower().strip()
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
             method = 'drop'
-        saveModel(method)
+            model_type = 'stack'
+        saveModel(method = method, model_type = model_type)
         context = "model saved as .sav"
         return Response(status=200, response=context)
 
 @api.response(200, 'OK')
 @api.response(404, 'Not found')
 @api.route('/getCurve', endpoint="getCurve")
+@api.doc(params = {'model_type':'model_type'})
 class getCurve(Resource):
     def get(self):
-<<<<<<< HEAD
-        #TODO
-        contex t = "model saved as .sav"
-        return Response(status=200, response=context)
-=======
-        context = get_Curve_DB()
+        request.args = request.args.to_dict()
+        try:
+            model_type = request.args['model_type'].lower().strip()
+        except:
+            model_type = 'stack'
+        context = get_Curve_DB(model_type = model_type)
         if context == None:
             return Response(status=404, response="Please train model before get curve.")
         return Response(status=200, response=dumps(context,
                                                    sort_keys=False,
                                                     indent=4))
->>>>>>> 0dc4366da357aa48edda49631d34bbcb1a7bf219
 
 if __name__ == '__main__':
     app.run(debug=True)

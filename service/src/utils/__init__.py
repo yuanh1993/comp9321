@@ -1,8 +1,6 @@
 from .methods import Logistic, DecisionTree, KNNCleaner
 import numpy as np
 import pandas as pd
-import json
-
 
 discrete_data = [
     2, 3, 6, 7, 9, 13, 14

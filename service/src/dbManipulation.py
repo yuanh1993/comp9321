@@ -467,114 +467,214 @@ def get_cleaned_data_from_DB(method = 'drop',db_name='heart_disease.db'):
     conn.close()
     return result
 
-def save_Learning_curve(method='drop',db_name='heart_disease.db'):
+def save_Learning_curve(method='drop',db_name='heart_disease.db', model_type = 'stack'):
     train_sizes, train_scores, valid_scores = learningCurve(method)
     conn = sqlite3.connect(db_name)
     c = conn.cursor()
-    try:
-        c.execute("select * from learning_curve")
-    except:
-        c.execute('''
-            create table learning_curve(
-                        x_20 real,
-                        x_40 real,
-                        x_60 real,
-                        x_80 real,
-                        x_100 real,
-                        x_120 real,
-                        x_140 real,
-                        x_160 real,
-                        x_180 real,
-                        x_200 real,
-                        x_220 real,
-                        x_240 real,
-                        x_260 real,
-                        label text primary key
-                        )
-        ''')
-        conn.commit()
-    try:
-        train_score = []
-        for x in train_scores:
-            train_score.append(x)
-        train_score.append('train_score')
-        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
-                  " x_180, x_200, x_220, x_240, x_260, label) values "
-                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
-        valid_score = []
-        for x in valid_scores:
-            valid_score.append(x)
-        valid_score.append('valid_score')
-        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
-                  " x_180, x_200, x_220, x_240, x_260, label) values "
-                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
-    except:
-        c.execute("drop table learning_curve")
-        c.execute('''
-                    create table learning_curve(
-                                x_20 real,
-                                x_40 real,
-                                x_60 real,
-                                x_80 real,
-                                x_100 real,
-                                x_120 real,
-                                x_140 real,
-                                x_160 real,
-                                x_180 real,
-                                x_200 real,
-                                x_220 real,
-                                x_240 real,
-                                x_260 real,
-                                label text primary key
-                                )
-                ''')
-        conn.commit()
-        train_score = []
-        for x in train_scores:
-            train_score.append(x)
-        train_score.append('train_score')
-        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
-                  " x_180, x_200, x_220, x_240, x_260, label) values "
-                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
-        valid_score = []
-        for x in valid_scores:
-            valid_score.append(x)
-        valid_score.append('valid_score')
-        c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
-                  " x_180, x_200, x_220, x_240, x_260, label) values "
-                  "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+    if model_type == 'stack':
+        try:
+            c.execute("select * from learning_curve")
+        except:
+            c.execute('''
+                create table learning_curve(
+                            x_20 real,
+                            x_40 real,
+                            x_60 real,
+                            x_80 real,
+                            x_100 real,
+                            x_120 real,
+                            x_140 real,
+                            x_160 real,
+                            x_180 real,
+                            x_200 real,
+                            x_220 real,
+                            x_240 real,
+                            x_260 real,
+                            label text primary key
+                            )
+            ''')
+            conn.commit()
+        try:
+            train_score = []
+            for x in train_scores:
+                train_score.append(x)
+            train_score.append('train_score')
+            c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+            valid_score = []
+            for x in valid_scores:
+                valid_score.append(x)
+            valid_score.append('valid_score')
+            c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+        except:
+            c.execute("drop table learning_curve")
+            c.execute('''
+                        create table learning_curve(
+                                    x_20 real,
+                                    x_40 real,
+                                    x_60 real,
+                                    x_80 real,
+                                    x_100 real,
+                                    x_120 real,
+                                    x_140 real,
+                                    x_160 real,
+                                    x_180 real,
+                                    x_200 real,
+                                    x_220 real,
+                                    x_240 real,
+                                    x_260 real,
+                                    label text primary key
+                                    )
+                    ''')
+            conn.commit()
+            train_score = []
+            for x in train_scores:
+                train_score.append(x)
+            train_score.append('train_score')
+            c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+            valid_score = []
+            for x in valid_scores:
+                valid_score.append(x)
+            valid_score.append('valid_score')
+            c.execute("insert into learning_curve(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+    else:
+        try:
+            c.execute("select * from learning_curve_logit")
+        except:
+            c.execute('''
+                create table learning_curve_logit (
+                            x_20 real,
+                            x_40 real,
+                            x_60 real,
+                            x_80 real,
+                            x_100 real,
+                            x_120 real,
+                            x_140 real,
+                            x_160 real,
+                            x_180 real,
+                            x_200 real,
+                            x_220 real,
+                            x_240 real,
+                            x_260 real,
+                            label text primary key
+                            )
+            ''')
+            conn.commit()
+        try:
+            train_score = []
+            for x in train_scores:
+                train_score.append(x)
+            train_score.append('train_score')
+            c.execute("insert into learning_curve_logit(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+            valid_score = []
+            for x in valid_scores:
+                valid_score.append(x)
+            valid_score.append('valid_score')
+            c.execute("insert into learning_curve_logit(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
+        except:
+            c.execute("drop table learning_curve_logit")
+            c.execute('''
+                        create table learning_curve_logit(
+                                    x_20 real,
+                                    x_40 real,
+                                    x_60 real,
+                                    x_80 real,
+                                    x_100 real,
+                                    x_120 real,
+                                    x_140 real,
+                                    x_160 real,
+                                    x_180 real,
+                                    x_200 real,
+                                    x_220 real,
+                                    x_240 real,
+                                    x_260 real,
+                                    label text primary key
+                                    )
+                    ''')
+            conn.commit()
+            train_score = []
+            for x in train_scores:
+                train_score.append(x)
+            train_score.append('train_score')
+            c.execute("insert into learning_curve_logit(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", train_score)
+            valid_score = []
+            for x in valid_scores:
+                valid_score.append(x)
+            valid_score.append('valid_score')
+            c.execute("insert into learning_curve_logit(x_20, x_40, x_60, x_80, x_100, x_120, x_140, x_160,"
+                      " x_180, x_200, x_220, x_240, x_260, label) values "
+                      "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", valid_score)
     conn.commit()
     conn.close()
 
-def get_Curve_DB(db_name='heart_disease.db'):
+def get_Curve_DB(db_name='heart_disease.db', model_type = 'stack'):
     conn = sqlite3.connect(db_name)
     conn.row_factory = dict_factory
     c = conn.cursor()
-    try:
-        c.execute("select * from learning_curve where label = 'train_score'")
-    except:
-        return None
-    train_raw = c.fetchone()
-    train_score = {}
-    for key in train_raw:
-        if key == 'label':
-            continue
-        clean_key = int(key.split('_')[1])
-        train_score[clean_key] = train_raw[key]
-    context = {
-        'train_score': train_score
-    }
-    c.execute("select * from learning_curve where label = 'valid_score'")
-    valid_raw = c.fetchone()
-    valid_score = {}
-    for key in valid_raw:
-        if key == 'label':
-            continue
-        clean_key = int(key.split('_')[1])
-        valid_score[clean_key] = valid_raw[key]
-    context['valid_score'] = valid_score
+    if model_type == 'stack':
+        try:
+            c.execute("select * from learning_curve where label = 'train_score'")
+        except:
+            return None
+        train_raw = c.fetchone()
+        train_score = {}
+        for key in train_raw:
+            if key == 'label':
+                continue
+            clean_key = int(key.split('_')[1])
+            train_score[clean_key] = train_raw[key]
+        context = {
+            'train_score': train_score
+        }
+        c.execute("select * from learning_curve where label = 'valid_score'")
+        valid_raw = c.fetchone()
+        valid_score = {}
+        for key in valid_raw:
+            if key == 'label':
+                continue
+            clean_key = int(key.split('_')[1])
+            valid_score[clean_key] = valid_raw[key]
+        context['valid_score'] = valid_score
+    else:
+        try:
+            c.execute("select * from learning_curve_logit where label = 'train_score'")
+        except:
+            return None
+        train_raw = c.fetchone()
+        train_score = {}
+        for key in train_raw:
+            if key == 'label':
+                continue
+            clean_key = int(key.split('_')[1])
+            train_score[clean_key] = train_raw[key]
+        context = {
+            'train_score': train_score
+        }
+        c.execute("select * from learning_curve_logit where label = 'valid_score'")
+        valid_raw = c.fetchone()
+        valid_score = {}
+        for key in valid_raw:
+            if key == 'label':
+                continue
+            clean_key = int(key.split('_')[1])
+            valid_score[clean_key] = valid_raw[key]
+        context['valid_score'] = valid_score
     conn.close()
     return context
+
 
 def write_db():
     create_db()
