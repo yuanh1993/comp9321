@@ -52,7 +52,7 @@ def saveModel(method = 'drop', model_type = 'stack'):
     if model_type == 'stack':
         filename = 'model.sav'
     else:
-        filename = 'model_logit'
+        filename = 'model_logit.sav'
     clf = training_model(method)
     joblib.dump(clf, filename)
 
@@ -60,7 +60,7 @@ def readModel(model_type = 'stack'):
     if model_type == 'stack':
         filename = 'model.sav'
     else:
-        filename = 'model_logit'
+        filename = 'model_logit.sav'
     clf = joblib.load(filename)
     return clf
 

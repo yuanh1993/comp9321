@@ -8,7 +8,7 @@ from dbManipulation import (write_db, feature_map, get_slicedData,
 from TrainModel import saveModel, readModel
 from json import loads, dumps
 from flask_cors import CORS
-from WashDog import sweep, decoration
+from WashDog import sweep, decoration, cleanInput
 
 db_name = 'heart_disease.db'
 total_feature = 14
@@ -169,6 +169,48 @@ class getCurve(Resource):
         context = get_Curve_DB(model_type = model_type)
         if context == None:
             return Response(status=404, response="Please train model before get curve.")
+        return Response(status=200, response=dumps(context,
+                                                   sort_keys=False,
+                                                    indent=4))
+
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/DataPredict', endpoint="DataPredict")
+@api.doc(params = {'model_type':'model_type',
+                   'age':'age',
+                   'sex':'sex',
+                   'pain_type':'pain_type',
+                   'blood_pressure':'blood_pressure',
+                   'cholestoral':'cholestoral',
+                   'blood_sugar':'blood_sugar',
+                   'electrocardiographic':'electrocardiographic',
+                   'heart_rate':'heart_rate',
+                   'angina':'angina',
+                   'oldpeak':'oldpeak',
+                   'ST_segment':'ST_segment',
+                   'vessels': 'vessels',
+                   'thal':'thal'
+                   })
+class DataPredict(Resource):
+    def post(self):
+        request.args = request.args.to_dict()
+        key_map = feature_map()
+        content = {}
+        for i in range(1, 14):
+            key = key_map[i]
+            try:
+                content[key] = request.args[key]
+            except:
+                content[key] = '?'
+        try:
+            model_type = request.args['model_type'].lower().strip()
+        except:
+            model_type = 'stack'
+        clf = readModel(model_type=model_type)
+        cleanData = cleanInput(content)
+        result = clf.predict(cleanData)
+        context = {'target': int(result[0])}
         return Response(status=200, response=dumps(context,
                                                    sort_keys=False,
                                                     indent=4))
