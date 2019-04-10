@@ -9,6 +9,7 @@ from TrainModel import saveModel, readModel
 from json import loads, dumps
 from flask_cors import CORS
 from WashDog import sweep, decoration, cleanInput
+from Learning import clustering
 
 db_name = 'heart_disease.db'
 total_feature = 14
@@ -211,6 +212,33 @@ class DataPredict(Resource):
         cleanData = cleanInput(content)
         result = clf.predict(cleanData)
         context = {'target': int(result[0])}
+        return Response(status=200, response=dumps(context,
+                                                   sort_keys=False,
+                                                    indent=4))
+
+@api.response(200, 'OK')
+@api.response(404, 'Not found')
+@api.route('/get_clustering', endpoint="get_clustering")
+@api.doc(params = {'cluster_method':'cluster_method'})
+class get_clustering(Resource):
+    def get(self):
+        request.args = request.args.to_dict()
+        try:
+            cluster_method = request.args['cluster_method'].lower().strip()
+        except:
+            cluster_method = 'kmeans'
+        X, labels, y = clustering(cluster_method=cluster_method)
+        context = {
+            'data':[]
+        }
+        for i in range(y.shape[0]):
+            data = {
+                'label_1': X[i,0],
+                'label_2': X[i,1],
+                'cluster': int(labels[i]),
+                'target': int(y[i])
+            }
+            context['data'].append(data)
         return Response(status=200, response=dumps(context,
                                                    sort_keys=False,
                                                     indent=4))

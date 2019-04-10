@@ -2,7 +2,7 @@ from model.stack import StackClassification
 from dbManipulation import get_cleaned_data_from_DB
 from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, SpectralClustering
 import numpy as np
 
 def test_learning(method = 'drop'):
@@ -59,7 +59,7 @@ def test_learning(method = 'drop'):
     for n in y_test:
         print(n, end=' ')
 
-def clustering():
+def clustering(cluster_method = 'kmeans'):
     db = get_cleaned_data_from_DB(method='drop')
     db_list = []
     target = []
@@ -96,12 +96,15 @@ def clustering():
     y = np.array(target)
     pca = PCA(n_components=2)
     pca.fit(X.T)
-    print(X.shape)
-    print(pca.components_.shape)
-    kmeans = KMeans(n_clusters=2, random_state=0).fit(pca.components_.T)
-    print(kmeans.labels_.shape)
-    print(kmeans.cluster_centers_.shape)
+    X = pca.components_.T
+    if cluster_method == 'spectral':
+        clustering = SpectralClustering(n_clusters=2,
+                                        assign_labels="discretize",
+                                        random_state = 0).fit(X)
+    else:
+        clustering = KMeans(n_clusters=2, random_state=0).fit(X)
+    return X, clustering.labels_, y
 
 if __name__ == '__main__':
     # test_learning(method='drop')
-    clustering()
+    clustering(cluster_method = 'kmeans')

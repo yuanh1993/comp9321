@@ -9,6 +9,8 @@ import { NavbarComponent } from './navbar/navbar.component';
 import { HttpClientModule }    from '@angular/common/http';
 import { ShowgraphComponent } from './showgraph/showgraph.component';
 import { RankComponent } from './rank/rank.component';
+import { ClusteringComponent } from './clustering/clustering.component';
+import { PredictionComponent } from './prediction/prediction.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { RankComponent } from './rank/rank.component';
     NavbarComponent,
     ShowgraphComponent,
     RankComponent,
+    ClusteringComponent,
+    PredictionComponent,
   ],
   imports: [
     BrowserModule,
