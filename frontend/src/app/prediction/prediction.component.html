@@ -1,3 +1,123 @@
-<p>
-  prediction works!
-</p>
+<br>
+<div class="row ">
+  <div class="col">
+    <div ngbDropdown class="d-inline-block w-75" style="margin-left:12%">
+      <button class="btn btn-outline-success mr-2 w-100" id="dropdownBasic1" ngbDropdownToggle>Select Model Type</button>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="w-100">
+        <button ngbDropdownItem (click)="setLogit()">Logistic Regression</button>
+        <button ngbDropdownItem (click)="setStack()">Stacked Methods</button>
+      </div>
+    </div>
+  </div>
+</div>
+<br /><br />
+
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <h3>Please Fill Information To Predicte</h3>
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label>Age</label>
+            <input id="age"   type="number" class="form-control" formControlName="age" />
+          </div>
+
+          <div class="form-group">
+            <label>Sex</label>
+            <div>
+              <mat-radio-group class="example-radio-group" formControlName="sex">
+                <mat-radio-button value="0.0">Female</mat-radio-button>
+                <mat-radio-button value="1.0">Male</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <label>Pain Type</label>
+          <div>
+            <select id="pain_type" class="browser-default custom-select" formControlName="pain_type">
+              <option *ngFor="let c of pain_type_select" [ngValue]="c">{{ c }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Resting Blood Pressure</label>
+            <input id="blood_pressure" type="number" class="form-control" formControlName="blood_pressure" />
+          </div>
+
+          <div class="form-group">
+            <label>Serum Cholestoral in mg/dl</label>
+            <input id="cholestoral" type="number" class="form-control" formControlName="cholestoral" />
+          </div>
+
+          <div class="form-group">
+            <label>Fasting Blood Sugar > 120 mg/dl?</label>
+            <div>
+              <mat-radio-group class="example-radio-group" formControlName="blood_sugar">
+                <mat-radio-button value="1.0">Yes</mat-radio-button>
+                <mat-radio-button value="0.0">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <label>Resting Electrocardiographic Results</label>
+          <div>
+            <select id="electrocardiographic" class="browser-default custom-select" formControlName="electrocardiographic">
+              <option *ngFor="let c of electrocardiographic_select" [ngValue]="c">{{ c }}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Maximum Heart Rate Achieved</label>
+            <input id="heart_rate" type="number" class="form-control" formControlName="heart_rate" />
+          </div>
+
+          <div class="form-group">
+            <label>Exercise Induced Angina</label>
+            <div>
+              <mat-radio-group class="example-radio-group" formControlName="angina">
+                <mat-radio-button value="1.0">Yes</mat-radio-button>
+                <mat-radio-button value="0.0">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Oldpeak/ST depression induced by exercise relative to rest</label>
+            <input id="oldpeak" type="number" class="form-control" formControlName="oldpeak" />
+          </div>
+
+          <div class="form-group">
+            <label>Slope of the peak exercise ST segment</label>
+            <input id="ST_segment" type="number" class="form-control" formControlName="ST_segment" />
+          </div>
+
+          <div class="form-group">
+            <label>Number of Major Vessels (0-3) Colored by Flourosopy</label>
+            <input id="vessels" type="number" class="form-control" formControlName="vessels" [ngClass]="{ 'is-invalid': submitted && f.vessels.errors }" />
+            <div *ngIf="submitted && f.vessels.errors" class="invalid-feedback">
+              <div *ngIf="f.vessels.errors">Must be in 0-3</div>
+            </div>
+          </div>
+
+          <label>thal(Thalassemia)</label>
+          <div>
+            <select id="thal" class="browser-default custom-select" formControlName="thal">
+              <option *ngFor="let c of thal_select" [ngValue]="c">{{ c }}</option>
+            </select>
+          </div>
+          <br>
+          <div class="form-group">
+            <div class="row">
+              <div class="col text-center">
+                <button class="btn btn-success btn-lg btn-block">Predict</button>
+              </div>
+            </div>
+          </div>
+</form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <div id="chartContainer" style="height: 370px; width: 100%;"></div>

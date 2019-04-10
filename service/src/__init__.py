@@ -194,7 +194,7 @@ class getCurve(Resource):
                    'thal':'thal'
                    })
 class DataPredict(Resource):
-    def post(self):
+    def get(self):
         request.args = request.args.to_dict()
         key_map = feature_map()
         content = {}
@@ -204,6 +204,14 @@ class DataPredict(Resource):
                 content[key] = request.args[key]
             except:
                 content[key] = '?'
+        all_null = True
+        for key in content:
+            if content[key] != '?':
+                all_null = False
+        if all_null == True:
+            return Response(status=200, response=dumps({'target': 0},
+                                                       sort_keys=False,
+                                                       indent=4))
         try:
             model_type = request.args['model_type'].lower().strip()
         except:

@@ -24,7 +24,6 @@ export class ClusteringComponent implements OnInit {
   }
 
   showdata(data, methed) {
-    console.log(data);
     let dataPoints01 = [];
     let dataPoints00 = [];
     let dataPoints10 = [];
@@ -65,7 +64,7 @@ export class ClusteringComponent implements OnInit {
         name: "Cluster 1: has disease",
         markerColor: "red",
         showInLegend: true,
-        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Active Users: {x}<br>CPU Utilization: {y}%",
+        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Component 1: {x}<br>Component 2: {y}",
         dataPoints: dataPoints01
       },
       {
@@ -74,7 +73,7 @@ export class ClusteringComponent implements OnInit {
         markerColor: "red",
         showInLegend: true,
         markerType: "triangle",
-        toolTipContent: "<span style=\"color:#C0504E \">{name}</span><br>Active Users: {x}<br>CPU Utilization: {y}%",
+        toolTipContent: "<span style=\"color:#C0504E \">{name}</span><br>Component 1: {x}<br>Component 2: {y}",
         dataPoints: dataPoints00
       },
       {
@@ -82,7 +81,7 @@ export class ClusteringComponent implements OnInit {
         name: "Cluster 2: has disease",
         markerColor: "blue",
         showInLegend: true,
-        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Active Users: {x}<br>CPU Utilization: {y}%",
+        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Component 1: {x}<br>Component 2: {y}",
         dataPoints: dataPoints11
       },
       {
@@ -91,8 +90,8 @@ export class ClusteringComponent implements OnInit {
         markerColor: "blue",
         showInLegend: true,
         markerType: "triangle",
-        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Active Users: {x}<br>CPU Utilization: {y}%",
-        dataPoints: dataPoints11
+        toolTipContent: "<span style=\"color:#4F81BC \">{name}</span><br>Component 1: {x}<br>Component 2: {y}",
+        dataPoints: dataPoints10
       },
       ]
     });

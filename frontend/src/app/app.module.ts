@@ -10,7 +10,11 @@ import { HttpClientModule }    from '@angular/common/http';
 import { ShowgraphComponent } from './showgraph/showgraph.component';
 import { RankComponent } from './rank/rank.component';
 import { ClusteringComponent } from './clustering/clustering.component';
-import { PredictionComponent } from './prediction/prediction.component';
+import { PredictionComponent, NgbdModalContent} from './prediction/prediction.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatNativeDateModule } from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -21,6 +25,7 @@ import { PredictionComponent } from './prediction/prediction.component';
     RankComponent,
     ClusteringComponent,
     PredictionComponent,
+    NgbdModalContent,
   ],
   imports: [
     BrowserModule,
@@ -28,8 +33,14 @@ import { PredictionComponent } from './prediction/prediction.component';
     HttpClientModule,
     NgbModule,
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatButtonToggleModule,
+    MatRadioModule,
+    MatNativeDateModule,
   ],
   providers: [],
+  entryComponents: [NgbdModalContent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
