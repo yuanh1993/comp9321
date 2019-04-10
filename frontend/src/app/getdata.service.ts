@@ -27,4 +27,7 @@ export class GetdataService {
   getrank(method: string) {
     return this.http.get<any>(`${this.baseurl}/rankFeature?method=${method}`);
   }
+  getcluster(cluster_method: string) {
+    return this.http.get<any>(`${this.baseurl}/get_clustering?cluster_method=${cluster_method}`);
+  }
 }
