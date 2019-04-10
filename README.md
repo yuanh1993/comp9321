@@ -13,3 +13,7 @@ This is a bootstrap package for angular
 ```
 npm install --save @ng-bootstrap/ng-bootstrap
 ```
+install material for angular form
+```
+npm install --save @angular/material @angular/cdk @angular/animations
+```
