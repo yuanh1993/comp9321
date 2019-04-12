@@ -1,4 +1,4 @@
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -39,7 +39,9 @@ import { MatNativeDateModule } from '@angular/material';
     MatRadioModule,
     MatNativeDateModule,
   ],
-  providers: [],
+  providers: [
+    Title,
+  ],
   entryComponents: [NgbdModalContent],
   bootstrap: [AppComponent]
 })

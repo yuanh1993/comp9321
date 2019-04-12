@@ -1,7 +1,16 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\frontend",
+    "\\frontend\\src",
+    "\\frontend\\src\\app",
+    "\\frontend\\src\\app\\clustering",
+    "\\frontend\\src\\app\\navbar",
+    "\\frontend\\src\\app\\prediction",
+    "\\frontend\\src\\app\\rank",
+    "\\frontend\\src\\app\\showgraph",
+    "\\frontend\\src\\app\\test"
   ],
-  "SelectedNode": "\\README.md",
+  "SelectedNode": "\\frontend\\src\\app\\prediction\\prediction.component.ts",
   "PreviewInSolutionExplorer": false
 }
