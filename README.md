@@ -40,3 +40,5 @@ Then type this command in your terminal to start service
 ng serve
 ```
 With both front-end and back-end services opened, you can go to http://127.0.0.1:4200 for front-end page and http://127.0.0.1:5000/api to check back-end api documents.
+
+## 3. Prediction Model
