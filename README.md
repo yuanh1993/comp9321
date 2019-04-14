@@ -10,6 +10,17 @@ Install back-end enviornment by run
 ```
 pip3 install -r requirements.txt
 ```
+<span style="color:red">If any error throws by your OS, you still can try install packages manually</span><br />
+```
+pip3 install Flask
+pip3 install pandas
+pip3 install sklearn
+pip3 install numpy
+pip3 install flask-cors
+pip3 install --no-cache-dir flask_restplus
+pip3 install --no-cache-dir progressbar
+```
+
 Front-end of this site developed using Angular 7. To install angular 7, make sure your node.js installation is finished<br />
 You can install angular 7 by command following in your terminal
 ```
@@ -102,6 +113,8 @@ Save stacked method learning curve
 ```
 http://127.0.0.1:5000/api/saveLearningCurve?model_type=stack
 ```
+### 3.6 (Optional)
+If you want change dataset or use another dataset, you can modify service/src/dataset/processed.cleveland.data or name your own dataset as "processed.cleveland.data" and replace old one.
 ## 4. Time to play
 open UI page with
 ```
