@@ -10,7 +10,7 @@ Install back-end enviornment by run
 ```
 pip3 install -r requirements.txt
 ```
-<span style="color:red">If any error throws by your OS, you still can try install packages manually</span><br />
+### If any error throws by your OS, you still can try install packages manually<br />
 ```
 pip3 install Flask
 pip3 install pandas
