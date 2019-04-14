@@ -10,6 +10,7 @@ from json import loads, dumps
 from flask_cors import CORS
 from WashDog import sweep, decoration, cleanInput
 from Learning import clustering
+import argparse
 
 db_name = 'heart_disease.db'
 total_feature = 14
@@ -249,4 +250,16 @@ class get_clustering(Resource):
                                                     indent=4))
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    parser = argparse.ArgumentParser(description='set portal and host')
+    parser.add_argument('--host',metavar='host',help='set host')
+    parser.add_argument('--port',metavar='port', type=int,help='set port')
+    args = parser.parse_args()
+    if args.port:
+        port=args.port
+    else:
+        port=5000
+    if args.host:
+        host=args.host
+    else:
+        host='127.0.0.1'
+    app.run(host=host,port=port,debug=True)
