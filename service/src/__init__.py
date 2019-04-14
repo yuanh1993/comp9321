@@ -63,7 +63,6 @@ class rankFeature(Resource):
         request.args = request.args.to_dict()
         try:
             method = request.args['method'].lower().strip()
-            print(method)
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
@@ -82,7 +81,6 @@ class rankFeature_toDB(Resource):
         request.args = request.args.to_dict()
         try:
             method = request.args['method'].lower().strip()
-            print(method)
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
@@ -101,7 +99,6 @@ class saveCleanDataDB(Resource):
         request.args = request.args.to_dict()
         try:
             method = request.args['method'].lower().strip()
-            print(method)
             if method != 'knn' and method != 'drop':
                 return Response(status=404, response='Only support KNN or drop method.')
         except:
