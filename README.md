@@ -58,7 +58,15 @@ to check back-end api documents
 ```
 http://127.0.0.1:5000/api 
 ```
-
+### If your port or address already in use, you can include arguments to set port and address
+An example using localhost and port 13213
+```
+python3 service/src/__init__.py --host localhost --port 13213
+```
+You can use --help to find help
+```
+python3 service/src/__init__.py --help
+```
 ## 3. Fill database (input all urls below after you start server is enough!)
 In order to present better performance to user experience, our sturcture intended to stored processed data into database. So you may always want to fill prepared data into database before interact with front-end UI.
 ![alt text](document/image/api.png "api_doc")
