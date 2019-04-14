@@ -7,10 +7,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TestComponent implements OnInit {
   constructor() { }
-  t:string;
 
   ngOnInit() {
-  let k='hao yuan';
-  this.t=k;
   }
 }

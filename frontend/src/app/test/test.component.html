@@ -1,3 +1,62 @@
-<p>
-  {{t}}
-</p>
+<!-- <!-- background: url(https://download.hipwallpaper.com/desktop/1600/900/20/13/pod9Yn.jpg) no-repeat fixed center;
+<!-- background: url(https://download.hipwallpaper.com/desktop/1600/900/34/81/ltPquX.jpg) no-repeat fixed center; -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+</style>
+</head>
+
+<body>
+<h1> Wildcat - Heard Disease Analysis</h1>
+
+<p class = "normal" style="color:rgb(34,86,181); text-align:center">
+  <strong>Developers:</strong>  Hongning Shangguan, Jiawen Ou, Hao Yuan</p>
+<hr>
+<h2> <i class="fas fa-cloud" style="font-size:120%;color:rgb(165,215,255);"></i> Introduction</h2>
+<!-- Introduction here -->
+<p class = "subtitle"> Functional Achievements:</p>
+<ol class = "tasks">
+  <li><a href = "http://127.0.0.1:4200/showgraph" title = "Go to Graph">Visualize the statistics for basic information for Attributes No.3~13 by groups of age and sex. </a></li>
+  <p class = "bold">Atrributes contain:</p>
+    <ul class = "graph">
+      <div class = "clearfix">
+        <div class = "box">
+      <li>Pain Type</li>
+      <li>Blood Pressure</li>
+      <li>Serum Cholestoral</li>
+      <li>Blood Sugar</li>
+      <li>Electrocardiographic</li>
+      <li>Heart Rate</li>
+      </div>
+      <div class = "box">
+      <li>Angina</li>
+      <li>Oldpeak</li>
+      <li>The Slope of The Peak Exercise ST Segment</li>
+      <li>Number of Major Vessels</li>
+      <li>Thalassemia</li>
+      </div>
+      </div>
+    </ul>
+  <li><a href = "http://127.0.0.1:4200/rank" title = "Go to Rank">Visualize the relationship between potential important factors and heart disease according to suitable algorithm.</a></li>
+  <li><a href = "http://127.0.0.1:4200/home" title = "Go to Prediction">Predict the rate of getting <strong>heart disease</strong> and display the accuracy graph based on the number of iterations.</a></li>
+</ol>
+
+<h2><i class="fas fa-cloud" style="font-size:120%;color:rgb(165,215,255);"></i>Graph Analysis</h2>
+<p class = "normal">There are 2 different types of dataset which are discrete, continuous. There are three combinations of discrete and continuous data. </p>
+<ul class = "p">
+  <li>Discrete to Discrete - Pie Chart</li>
+  <li>Continuous to discrete - Bar Chart</li>
+  <li>Continuous to continuous - Scatter Graph</li>
+  </ul>
+
+<h2><i class="fas fa-cloud" style="font-size:120%;color:rgb(165,215,255);"></i>Feature Importance Analysis</h2>
+<p class = "normal"> &nbsp;&nbsp;&nbsp;&nbsp; In order to find the relationship between features and target precisely, we devided all features into two groups - discrete and continuous.</p>
+  <ul class = "p">
+<li>Measurement of relationship between discrete features and the target are cummulative emtropy, since monotonic distribution (low entropy) represent more relavent between the given features and target.
+while equilibrium distribution (high entropy) represent less relevent between the given features and the target.</li>
+<li>Measurement of relationship between continuous features and the target are based on logistic regression which can map the range of continuous data into (0,1).
+And then using model accuracy to find the correlation between features and target.</li>
+</ul>
+
+</body>

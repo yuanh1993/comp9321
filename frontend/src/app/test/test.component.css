@@ -1,0 +1,81 @@
+/* body{
+  background-color: rgb(238,246,255);
+  background-size: auto;
+} */
+body,html {
+  background: url(https://download.hipwallpaper.com/desktop/1280/1024/45/62/JhNt1K.jpg) no-repeat center fixed;
+  -webkit-background-size:cover;
+}
+h1 {
+  color:darkblue;
+  text-align: center;
+  font-family: Impact, serif;
+  font-size: 300%;
+  padding-top: 15px;
+}
+h2 {
+  color:rgb(42,49,150);
+  text-align: left;
+  font-family: Impact;
+  font-size: 200%
+}
+p.subtitle{
+  margin-left:30px;
+  font-family: Arial;
+  font-size: 130%;
+}
+p.normal{
+  margin-left:20px;
+  font-family: Arial;
+  font-size: 100%;
+  padding: 10px;
+  line-height: 25px;
+}
+p.bold{
+  font-weight:bold;
+  margin-bottom: 0px;
+  font-family: Arial;
+  font-size: 100%;
+  margin-left: 5px;
+}
+ol.tasks{
+  list-style-type: decimal;
+  margin-left:25px;
+  font-size:100%;
+}
+ul.graph{
+  font-size:100%;
+}
+ul.p{
+  font-size: 100%;
+  list-style-type: square;
+  margin-left: 10px;
+  margin-top: -15px;
+}
+a:link{
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  text-decoration: underline;
+  color: blue;
+}
+a:active {
+  text-decoration: underline;
+}
+*{
+  box-sizing: border-box;
+}
+.box{
+  float: left;
+  width: 300px;
+  height: 110%;
+}
+.clearfix::after{
+  content: "";
+  clear:both;
+  display: table;
+}
