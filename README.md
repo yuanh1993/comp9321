@@ -8,7 +8,7 @@ pip3 install --upgrade pip
 ```
 Install back-end enviornment by run
 ```
-pip3 install -r service/requirements.txt
+pip3 install -r requirements.txt
 ```
 Front-end of this site developed using Angular 7. To install angular 7, make sure your node.js installation is finished<br />
 You can install angular 7 by command following in your terminal
