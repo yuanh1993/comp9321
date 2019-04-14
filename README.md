@@ -48,7 +48,7 @@ to check back-end api documents
 http://127.0.0.1:5000/api 
 ```
 
-## 3. Fill database
+## 3. Fill database (input all urls below after you start server is enough!)
 In order to present better performance to user experience, our sturcture intended to stored processed data into database. So you may always want to fill prepared data into database before interact with front-end UI.
 ![alt text](document/image/api.png "api_doc")
 This figure shows all APIs that this service have.<br />
