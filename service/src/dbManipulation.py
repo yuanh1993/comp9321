@@ -2,9 +2,7 @@ from __future__ import absolute_import
 import sqlite3, progressbar
 import DataEngineer
 from utils import One_Hot_All, discrete_analysis, continous_analysis
-from joblib import Parallel, delayed
 from TrainModel import learningCurve
-# import TrainModel
 
 discrete_data = [
     2, 3, 6, 7, 9, 13, 14
@@ -228,7 +226,12 @@ def single_task(feature_points, i, method):
 
 def RankFeatures(method):
     feature_points = {}
-    feature_points = Parallel(n_jobs=1)(delayed(single_task)(feature_points, i, method) for i in range(1, 14))[0]
+    for i in range(1, 14):
+        X, y = get_spec_feature(i, fix_method=method)
+        if i in discrete_data:
+            feature_points[i] = discrete_analysis(X, y, i)
+        else:
+            feature_points[i] = continous_analysis(X, y, i)
     features = [x for x in range(1, 14)]
     features.sort(key=lambda x: feature_points[x], reverse=True)
     context = {}
