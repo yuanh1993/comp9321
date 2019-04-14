@@ -59,4 +59,19 @@ while equilibrium distribution (high entropy) represent less relevent between th
 And then using model accuracy to find the correlation between features and target.</li>
 </ul>
 
+<h2><i class="fas fa-cloud" style="font-size:120%;color:rgb(165,215,255);"></i>Model</h2>
+<p class = "normal"> &nbsp;&nbsp;&nbsp;&nbsp; We present two models, simple logistic model and more complicated stacked model.</p>
+<ul class = "p">
+<li>Logistic model derive from logistic regression with linear model before feed into sigmoid function whose penalty nomalization is L2</li>
+<li>Stacked model feed original dataset to three different models, output 3 advanced features then use logistic regression same as above to learn from these three features. First in-stack is a SVM classifier with linear kernal and relatively low coefficients.
+  Second model is a decision tree. Third model is a gradient boosting model with 500 estimators and each estimator is stump with depth equals three. suffered from insufficient data sample, complicated stack model is a little bit overfitting.</li>
+</ul>
+
+<h2><i class="fas fa-cloud" style="font-size:120%;color:rgb(165,215,255);"></i>Clustering</h2>
+<p class = "normal"> &nbsp;&nbsp;&nbsp;&nbsp; To discover potential relationships among features, we present two kinds of clustering methods regarding PCA compressed data.</p>
+<ul class = "p">
+<li>Kmeans - clustering based on centers.</li>
+<li>Spectral - clustering regarding distance among neighbours.</li>
+</ul>
+
 </body>
