@@ -41,4 +41,7 @@ ng serve
 ```
 With both front-end and back-end services opened, you can go to http://127.0.0.1:4200 for front-end page and http://127.0.0.1:5000/api to check back-end api documents.
 
-## 3. Prediction Model
+## 3. Fill database
+In order to present better performance to user experience, our sturcture intended to stored processed data into database. So you may always want to fill prepared data into database before interact with front-end UI.
+![alt text](document/image/api.png "api_doc")
+This figure shows all APIs that this service have.
