@@ -1,6 +1,6 @@
 # Heart Disease Data Analysis
 ## 1. Enviornment Install
-Make sure you have node.js and Python 3 installed already, pip3 is nessesary as well, recommend pip3 > 19.0.0
+Make sure you have node.js and Python 3 installed already, pip3 is nessesary as well, recommend pip3 > 19.0.0<br />
 You can download node.js at https://nodejs.org/en/, python 3 at https://www.python.org/downloads/.
 Our back-end developed using Flask, before install all requirements, you can upgrade you pip by run in you terminal
 ```
@@ -44,4 +44,4 @@ With both front-end and back-end services opened, you can go to http://127.0.0.1
 ## 3. Fill database
 In order to present better performance to user experience, our sturcture intended to stored processed data into database. So you may always want to fill prepared data into database before interact with front-end UI.
 ![alt text](document/image/api.png "api_doc")
-This figure shows all APIs that this service have.
+This figure shows all APIs that this service have.<br />
