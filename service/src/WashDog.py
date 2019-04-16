@@ -52,8 +52,12 @@ def cleanInput(inputX):
     key_map = feature_map()
     input_list = []
     for i in range(1, 14):
-        if inputX[key_map[i]] != '?':
+        if i == 10 and (inputX[key_map[i]] == 0 or inputX[key_map[i]] == '?'):
+            il = 1.0
+        elif inputX[key_map[i]] != '?':
             il = float(inputX[key_map[i]])
+        else:
+            il = inputX[key_map[i]]
         input_list.append(il)
     missing_index = []
     for i in range(len(input_list)):
